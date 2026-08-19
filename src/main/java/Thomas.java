@@ -50,6 +50,13 @@ public class Thomas {
                         System.out.println(" Nice! Task has been marked as done:");
                         System.out.println("   [X] " + tasks[index]);
                     }
+                } else if (command.startsWith("unmark ")) {
+                    int index = Integer.parseInt(command.substring(7).trim()) - 1;
+                    if (index >= 0 && index < taskNo) {
+                        isDone[index] = false;
+                        System.out.println(" Ok, task has been marked as not done:");
+                        System.out.println("   [ ] " + tasks[index]);
+                    }
                 }   else {
                     tasks[taskNo] = command;
                     isDone[taskNo] = false;
