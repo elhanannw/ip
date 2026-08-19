@@ -9,7 +9,7 @@ public class Task {
     /**
      * Constructs a new Task with specific description.
      *
-     * @param description the textual description of task.
+     * @param description The textual description of task.
      * */
     public Task(String description) {
         this.description = description;
@@ -42,9 +42,19 @@ public class Task {
     /**
      * Retrieves task description
      *
-     * @return Description String of the task.
+     * @return The description String of the task.
      * */
     public String getDescription() {
         return this.description;
+    }
+
+    /**
+     * Prints status and description of task
+     *
+     * @return Status Icon and description as a string.
+     * */
+    @Override
+    public String toString() {
+        return "[" + getStatusIcon() + "] " + description;
     }
 }
