@@ -24,11 +24,12 @@ public class Thomas {
         System.out.println(DIVIDER);
 
         String[] tasks = new String[100];
+        boolean[] isDone = new boolean[100];
         int taskNo = 0;
 
         try (Scanner scanner = new Scanner(System.in)) {
             while (scanner.hasNextLine()) {
-                String command = scanner.nextLine();
+                String command = scanner.nextLine().trim();
                 System.out.println(DIVIDER);
 
                 if (command.trim().equals("bye")) {
@@ -39,10 +40,19 @@ public class Thomas {
 
                 if (command.equals("list")) {
                     for (int i=0; i<taskNo; i+=1) {
-                        System.out.println(" " + (i+1) + ". " + tasks[i]);
+                        String stateIcon = isDone[i] ? "[X]" : "[ ]";
+                        System.out.println(" " + (i+1) + "." + stateIcon + " " + tasks[i]);
                     }
-                } else {
+                } else if (command.startsWith("mark ")) {
+                    int index = Integer.parseInt(command.substring(5).trim()) - 1;
+                    if (index >= 0 && index < taskNo) {
+                        isDone[index] = true;
+                        System.out.println(" Nice! Task has been marked as done:");
+                        System.out.println("   [X] " + tasks[index]);
+                    }
+                }   else {
                     tasks[taskNo] = command;
+                    isDone[taskNo] = false;
                     taskNo+=1;
                     System.out.println(" added: " + command);
                 }
