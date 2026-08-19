@@ -1,8 +1,10 @@
+import java.awt.*;
 import java.util.Scanner;
 
 /**
- * Starts Thomas, a small command-line task manager.
- * Users can add tasks to do, deadlines, events, list these tasks, and toggle completion statuses.
+ * Starts Thomas, a command-line task manager app.
+ * Users can manage tasks, adding Todos, Deadlines, and Events,
+ * list these tasks, and toggle completion statuses.
  */
 public class Thomas {
     private static final String DIVIDER = "____________________________________________________________";
@@ -37,73 +39,146 @@ public class Thomas {
                     break;
                 }
 
-                if (command.equals("list")) {
-                    System.out.println(" Here are the tasks in your list:");
-                    for (int i=0; i<taskNo; i+=1) {
-                        System.out.println(" " + (i+1) + "." + tasks[i]);
+                try {
+                    /* list */
+                    if (command.equals("list")) {
+                        System.out.println(" Here are the tasks in your list:");
+                        for (int i=0; i<taskNo; i+=1) {
+                            System.out.println(" " + (i+1) + "." + tasks[i]);
+                        }
+
                     }
-                } else if (command.startsWith("mark ")) {
-                    int index = Integer.parseInt(command.substring(5).trim()) - 1;
-                    if (index >= 0 && index < taskNo) {
-                        tasks[index].markAsDone();
+                    /* mark */
+                    else if (command.startsWith("mark")) {
+                        // Changed to string. If user key in anything other than number (eg: mark two), previously would've crashed
+                        String strIndex = command.substring(4).trim();
+
+                        // Check if mark command empty
+                        if (strIndex.isEmpty()) {
+                            throw new ThomasException("Pls specify task number to mark.");
+                        }
+                        int taskNum = Integer.parseInt(strIndex) - 1;
+                        // Cannot be out of list
+                        if (taskNum < 0 || taskNum >= taskNo) {
+                            throw new ThomasException("Task number doesnt exist.");
+                        }
+                        tasks[taskNum].markAsDone();
                         System.out.println(" Nice! Task has been marked as done:");
-                        System.out.println("   " + tasks[index]);
+                        System.out.println("   " + tasks[taskNum]);
+
                     }
-                } else if (command.startsWith("unmark ")) {
-                    int index = Integer.parseInt(command.substring(7).trim()) - 1;
-                    if (index >= 0 && index < taskNo) {
-                        tasks[index].markAsNotDone();
+                    /* unmark */
+                    else if (command.startsWith("unmark")) {
+                        // Changed to string. If user key in anything other than number (eg: mark two), previously would've crashed
+                        String strIndex = command.substring(6).trim();
+
+                        // Empty check
+                        if (strIndex.isEmpty()) {
+                            throw new ThomasException("Pls specify task number to mark.");
+                        }
+                        int taskNum = Integer.parseInt(strIndex) - 1;
+
+                        // Cannot be out of list
+                        if (taskNum < 0 || taskNum >= taskNo) {
+                            throw new ThomasException("Task number doesnt exist.");
+                        }
+                        tasks[taskNum].markAsNotDone();
                         System.out.println(" Ok, task has been marked as not done:");
-                        System.out.println("   " + tasks[index]);
+                        System.out.println("   " + tasks[taskNum]);
+
                     }
-                } else if (command.startsWith("todo ")) {
-                    if (taskNo >= tasks.length) {
-                        System.out.println(" Oops, task list is full!");
-                    } else {
-                        String des = command.substring(5).trim();
+                    /* to do */
+                    else if (command.startsWith("todo")) {
+                        String des = command.substring(4).trim();
+                        // Check if unmark command empty
+                        if (des.isEmpty()) {
+                            throw new ThomasException("Todo description cannot be empty.");
+                        }
                         Task t = new Todo(des);
                         tasks[taskNo++] = t;
                         printTaskAdded(t, taskNo);
-                    }
-                } else if (command.startsWith("deadline ")) {
-                    if (taskNo >= tasks.length) {
-                        System.out.println(" Oops, task list is full!");
-                    } else {
-                        int byIndex = command.indexOf("/by");
-                        if (byIndex == -1) {
-                            System.out.println(" Oof, please specify the deadline using '/by <date>'.");
-                        } else {
-                            String des = command.substring(9, byIndex).trim();
-                            String by = command.substring(byIndex + 3).trim();
 
-                            Task t = new Deadline(des, by);
-                            tasks[taskNo++] = t;
-                            printTaskAdded(t, taskNo);
-                        }
                     }
-                } else if (command.startsWith("event ")) {
-                    if (taskNo >= tasks.length) {
-                        System.out.println(" Oops, task list is full!");
-                    } else {
+                    /* deadline */
+                    else if (command.startsWith("deadline")) {
+                        int byIndex = command.indexOf("/by");
+
+                        // Check if /by exists
+                        String des;
+                        if (byIndex == -1) {
+                            // if no /by, description is after 'deadline'
+                            des = command.substring(8).trim();
+                        } else {
+                            // if have /by, description is before 'deadline'
+                            des = command.substring(8, byIndex).trim();
+                        }
+
+                        // Empty check for description
+                        if (des.isEmpty()) {
+                            throw new ThomasException("Deadline description cannot be empty.");
+                        }
+
+                        // If keyword /by is missing
+                        if (byIndex == -1) {
+                            throw new ThomasException("Deadline requires '/by <date>'. Eg: deadline Assignment 1 /by Tuesday");
+                        }
+                        String by = command.substring(byIndex + 3).trim();
+
+                        // Empty check for by
+                        if (by.isEmpty()) {
+                            throw new ThomasException("Date/Time of '/by' cannot be empty.");
+                        }
+                        Task t = new Deadline(des, by);
+                        tasks[taskNo++] = t;
+                        printTaskAdded(t, taskNo);
+
+                    }
+                    /* event */
+                    else if (command.startsWith("event")) {
                         int fromIndex = command.indexOf("/from");
                         int toIndex = command.indexOf("/to");
 
-                        if (fromIndex == -1 || toIndex == -1 || toIndex < fromIndex) {
-                            System.out.println(" Oof, please specify the event using 'event <desc> /from <start> /to <end>'.");
+                        // check if /from exists
+                        String des;
+                        if (fromIndex == -1) {
+                            // if no /from, description is after 'event'
+                            des = command.substring(5).trim();
                         } else {
-                            String des = command.substring(6, fromIndex).trim();
-                            String from = command.substring(fromIndex + 5, toIndex).trim();
-                            String to = command.substring(toIndex + 3).trim();
-
-                            Task t = new Event(des, from, to);
-                            tasks[taskNo++] = t;
-                            printTaskAdded(t, taskNo);
+                            // if have /from, description before 'event'
+                            des = command.substring(5, fromIndex).trim();
                         }
-                    }
-                }
-            }
 
-            System.out.println(DIVIDER);
+                        // Empty check for description
+                        if (des.isEmpty()) {
+                            throw new ThomasException("Event description cannot be empty.");
+                        }
+
+                        // Check if keyword present and in right order
+                        if (fromIndex == -1 || toIndex == -1) {
+                            throw new ThomasException("Event requires '/from' and '/to'. Eg: event meeting /from Mon /to Thurs");
+                        }
+
+                        String from = command.substring(fromIndex + 5, toIndex).trim();
+                        String to = command.substring(toIndex + 3).trim();
+
+                        // Empty check for from and to
+                        if (from.isEmpty() || to.isEmpty()) {
+                            throw new ThomasException("Date/Time of '/from' or '/to' cannot be empty.");
+                        }
+
+                        Task t = new Event(des, from, to);
+                        tasks[taskNo++] = t;
+                        printTaskAdded(t, taskNo);
+                    } else {
+                        throw new ThomasException("I doono what that is, try again mate :>");
+                    }
+                } catch (ThomasException e) {
+                    System.out.println("oooooooof :<< " + e.getMessage());
+                } catch (NumberFormatException e) {
+                    System.out.println("oooooooof Please enter a valid task number." );
+                }
+                System.out.println(DIVIDER);
+            }
         }
     }
 
