@@ -40,6 +40,11 @@ public class Task {
     }
 
     /**
+     * Check if task is done.
+     * */
+    public boolean isDone() { return this.isDone; }
+
+    /**
      * Retrieves task description
      *
      * @return The description String of the task.

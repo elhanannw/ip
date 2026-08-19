@@ -1,10 +1,11 @@
 import java.awt.*;
+import java.util.ArrayList;
 import java.util.Scanner;
 
 /**
  * Starts Thomas, a command-line task manager app.
  * Users can manage tasks, adding Todos, Deadlines, and Events,
- * list these tasks, and toggle completion statuses.
+ * list these tasks, mark/unmark, and delete.
  */
 public class Thomas {
     private static final String DIVIDER = "____________________________________________________________";
@@ -25,8 +26,8 @@ public class Thomas {
         System.out.println("Whats up? What can I do for you?");
         System.out.println(DIVIDER);
 
-        Task[] tasks = new Task[100];
-        int taskNo = 0;
+        // Using arraylist instead of Task[]
+        ArrayList<Task> tasks = new ArrayList<>();
 
         try (Scanner scanner = new Scanner(System.in)) {
             while (scanner.hasNextLine()) {
@@ -43,8 +44,8 @@ public class Thomas {
                     /* list */
                     if (command.equals("list")) {
                         System.out.println(" Here are the tasks in your list:");
-                        for (int i=0; i<taskNo; i+=1) {
-                            System.out.println(" " + (i+1) + "." + tasks[i]);
+                        for (int i=0; i<tasks.size(); i+=1) {
+                            System.out.println(" " + (i+1) + "." + tasks.get(i));
                         }
 
                     }
@@ -59,12 +60,17 @@ public class Thomas {
                         }
                         int taskNum = Integer.parseInt(strIndex) - 1;
                         // Cannot be out of list
-                        if (taskNum < 0 || taskNum >= taskNo) {
+                        if (taskNum < 0 || taskNum >= tasks.size()) {
                             throw new ThomasException("Task number doesnt exist.");
                         }
-                        tasks[taskNum].markAsDone();
+                        Task toMark = tasks.get(taskNum);
+                        // Check if task already marked as done
+                        if (toMark.isDone()) {
+                            throw new ThomasException("Task is already marked as done!");
+                        }
+                        tasks.get(taskNum).markAsDone();
                         System.out.println(" Nice! Task has been marked as done:");
-                        System.out.println("   " + tasks[taskNum]);
+                        System.out.println("   " + tasks.get(taskNum));
 
                     }
                     /* unmark */
@@ -79,14 +85,38 @@ public class Thomas {
                         int taskNum = Integer.parseInt(strIndex) - 1;
 
                         // Cannot be out of list
-                        if (taskNum < 0 || taskNum >= taskNo) {
+                        if (taskNum < 0 || taskNum >= tasks.size()) {
                             throw new ThomasException("Task number doesnt exist.");
                         }
-                        tasks[taskNum].markAsNotDone();
+                        Task toUnMark = tasks.get(taskNum);
+                        // Check if task already not done
+                        if (!toUnMark.isDone()) {
+                            throw new ThomasException("Task is already marked as not done!");
+                        }
+                        toUnMark.markAsNotDone();
                         System.out.println(" Ok, task has been marked as not done:");
-                        System.out.println("   " + tasks[taskNum]);
+                        System.out.println("   " + tasks.get(taskNum));
 
                     }
+
+                    /* delete*/
+                    else if (command.startsWith("delete")) {
+                        String strIndex = command.substring(6).trim();
+                        // Check if mark command empty
+                        if (strIndex.isEmpty()) {
+                            throw new ThomasException("Pls specify task number to delete.");
+                        }
+                        int taskNum = Integer.parseInt(strIndex) - 1;
+                        // Cannot be out of list
+                        if (taskNum < 0 || taskNum >= tasks.size()) {
+                            throw new ThomasException("Task number doesnt exist.");
+                        }
+                        Task removedTask = tasks.remove(taskNum);
+                        System.out.println(" Alright! This task has been deleted:");
+                        System.out.println("   " + removedTask);
+                        System.out.println(" Now you have " + tasks.size() + " tasks left");
+                    }
+
                     /* to do */
                     else if (command.startsWith("todo")) {
                         String des = command.substring(4).trim();
@@ -95,8 +125,8 @@ public class Thomas {
                             throw new ThomasException("Todo description cannot be empty.");
                         }
                         Task t = new Todo(des);
-                        tasks[taskNo++] = t;
-                        printTaskAdded(t, taskNo);
+                        tasks.add(t);
+                        printTaskAdded(t, tasks.size());
 
                     }
                     /* deadline */
@@ -129,8 +159,8 @@ public class Thomas {
                             throw new ThomasException("Date/Time of '/by' cannot be empty.");
                         }
                         Task t = new Deadline(des, by);
-                        tasks[taskNo++] = t;
-                        printTaskAdded(t, taskNo);
+                        tasks.add(t);
+                        printTaskAdded(t, tasks.size());
 
                     }
                     /* event */
@@ -167,8 +197,8 @@ public class Thomas {
                         }
 
                         Task t = new Event(des, from, to);
-                        tasks[taskNo++] = t;
-                        printTaskAdded(t, taskNo);
+                        tasks.add(t);
+                        printTaskAdded(t, tasks.size());
                     } else {
                         throw new ThomasException("I doono what that is, try again mate :>");
                     }
