@@ -5,6 +5,10 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Scanner;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
+import java.util.Locale;
 
 /**
  * Handles loading tasks from and saving tasks to a hard disk file using OS-independent paths.
@@ -85,7 +89,6 @@ public class Storage {
 
         // Extract base task elements
         String type = line.substring(0, first).trim();
-        String statusStr = line.substring(first + 1, second).trim();
         boolean isDone = line.substring(first + 1, second).trim().equals("Y");
 
         Task task;
@@ -109,7 +112,10 @@ public class Storage {
             if (description.isEmpty() || by.isEmpty()) {
                 throw new ThomasException("Deadline description or date/time empty!");
             }
-            task = new Deadline(description, by);
+
+            // parseDate helper to prevent corruption on txt edits
+            LocalDate byDate = parseDate(by);
+            task = new Deadline(description, by.toString());
 
         } else if (type.equals("E")) {
             int third = line.indexOf('|', second + 1);
@@ -126,14 +132,16 @@ public class Storage {
                 from = line.substring(third + 1).trim();
                 to = "";
             } else {
-                from = line.substring(third + 1).trim();
+                from = line.substring(third + 1, fourth).trim();
                 to = line.substring(fourth + 1).trim();
             }
 
             if (description.isEmpty() || from.isEmpty()) {
                 throw new ThomasException("Event description or time empty!");
             }
-            task = new Event(description, from, to);
+            LocalDate fromDate = parseDate(from);
+            LocalDate toDate = parseDate(to);
+            task = new Event(description, fromDate.toString(), toDate.toString());
         } else {
             throw new ThomasException("Broo, unknown task type" + type);
         }
@@ -160,6 +168,25 @@ public class Storage {
             }
         } catch (Exception e) {
             System.out.println(" !!! cannot save to disk: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Supports both standard ISO (yyyy-MM-dd) and display (MMM dd yyyy).
+     * */
+    private LocalDate parseDate(String dateStr) throws ThomasException {
+        String cleanDate = dateStr.trim();
+
+        // Standard ISO: 2026-08-09
+        try {
+            return LocalDate.parse(cleanDate);
+        } catch (DateTimeParseException e1) {
+            try {
+                DateTimeFormatter disFormat = DateTimeFormatter.ofPattern("MMM dd yyyy", Locale.ENGLISH);
+                return LocalDate.parse(cleanDate, disFormat);
+            } catch (DateTimeParseException e2) {
+                throw new ThomasException("Invalid date format '" + cleanDate + "'. use yyyy-MM-dd or MMM dd yyyy.");
+            }
         }
     }
 }
