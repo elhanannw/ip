@@ -17,6 +17,14 @@ public class Deadline extends Task {
     }
 
     /**
+     * Converts Deadline task into a formatted string for text file storage.
+     *
+     * @return A formatted string representing Deadline task
+     * */
+    @Override
+    public String toFileFormat() { return "D | " + super.toFileFormat() + " | " + by; }
+
+    /**
      * Prints status, description and due date/time of deadline task
      *
      * @return Status icon, description, and due date/time as a string for the deadline task.

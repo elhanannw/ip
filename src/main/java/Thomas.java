@@ -1,14 +1,16 @@
-import java.awt.*;
 import java.util.ArrayList;
 import java.util.Scanner;
 
 /**
  * Starts Thomas, a command-line task manager app.
  * Users can manage tasks, adding Todos, Deadlines, and Events,
- * list these tasks, mark/unmark, and delete.
+ * list these tasks, mark/unmark, delete, and with persistent disk storage.
  */
 public class Thomas {
     private static final String DIVIDER = "____________________________________________________________";
+    /** File path for storing task list data on disk */
+    private static final Storage storage = new Storage("data", "thomas.txt");
+
     /**
      * Thomas application main entry point.
      *
@@ -26,8 +28,8 @@ public class Thomas {
         System.out.println("Whats up? What can I do for you?");
         System.out.println(DIVIDER);
 
-        // Using arraylist instead of Task[]
-        ArrayList<Task> tasks = new ArrayList<>();
+        // Load tasks upon startup
+        ArrayList<Task> tasks = storage.load();
 
         try (Scanner scanner = new Scanner(System.in)) {
             while (scanner.hasNextLine()) {
@@ -44,8 +46,8 @@ public class Thomas {
                     /* list */
                     if (command.equals("list")) {
                         System.out.println(" Here are the tasks in your list:");
-                        for (int i=0; i<tasks.size(); i+=1) {
-                            System.out.println(" " + (i+1) + "." + tasks.get(i));
+                        for (int i = 0; i < tasks.size(); i += 1) {
+                            System.out.println(" " + (i + 1) + "." + tasks.get(i));
                         }
 
                     }
@@ -69,6 +71,8 @@ public class Thomas {
                             throw new ThomasException("Task is already marked as done!");
                         }
                         tasks.get(taskNum).markAsDone();
+                        // Save changes to disk
+                        storage.save(tasks);
                         System.out.println(" Nice! Task has been marked as done:");
                         System.out.println("   " + tasks.get(taskNum));
 
@@ -94,6 +98,8 @@ public class Thomas {
                             throw new ThomasException("Task is already marked as not done!");
                         }
                         toUnMark.markAsNotDone();
+                        // Save changes to disk
+                        storage.save(tasks);
                         System.out.println(" Ok, task has been marked as not done:");
                         System.out.println("   " + tasks.get(taskNum));
 
@@ -112,6 +118,8 @@ public class Thomas {
                             throw new ThomasException("Task number doesnt exist.");
                         }
                         Task removedTask = tasks.remove(taskNum);
+                        // Save changes to disk
+                        storage.save(tasks);
                         System.out.println(" Alright! This task has been deleted:");
                         System.out.println("   " + removedTask);
                         System.out.println(" Now you have " + tasks.size() + " tasks left");
@@ -126,6 +134,8 @@ public class Thomas {
                         }
                         Task t = new Todo(des);
                         tasks.add(t);
+                        // Save changes to disk
+                        storage.save(tasks);
                         printTaskAdded(t, tasks.size());
 
                     }
@@ -160,6 +170,8 @@ public class Thomas {
                         }
                         Task t = new Deadline(des, by);
                         tasks.add(t);
+                        // Save changes to disk
+                        storage.save(tasks);
                         printTaskAdded(t, tasks.size());
 
                     }
@@ -198,6 +210,8 @@ public class Thomas {
 
                         Task t = new Event(des, from, to);
                         tasks.add(t);
+                        // Save changes to disk
+                        storage.save(tasks);
                         printTaskAdded(t, tasks.size());
                     } else {
                         throw new ThomasException("I doono what that is, try again mate :>");

@@ -13,6 +13,14 @@ public class Todo extends Task {
     }
 
     /**
+     * Converts Todo task into a formatted string for text file storage.
+     *
+     * @return A formatted string representing Todo task
+     * */
+    @Override
+    public String toFileFormat() { return "T | " + super.toFileFormat(); }
+
+    /**
      * Prints status and description of todo task
      *
      * @return Status icon and description as a string for the todo task.
