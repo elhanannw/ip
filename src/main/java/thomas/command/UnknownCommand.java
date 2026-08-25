@@ -1,3 +1,10 @@
+package thomas.command;
+
+import thomas.ThomasException;
+import thomas.storage.Storage;
+import thomas.task.TaskList;
+import thomas.ui.Ui;
+
 /**
  * Represents a command that Thomas does not recognize.
  */

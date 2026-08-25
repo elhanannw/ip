@@ -1,3 +1,9 @@
+package thomas.command;
+
+import thomas.storage.Storage;
+import thomas.task.TaskList;
+import thomas.ui.Ui;
+
 /**
  * Ends the Thomas application.
  */

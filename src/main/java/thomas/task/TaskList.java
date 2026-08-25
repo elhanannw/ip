@@ -1,4 +1,7 @@
+package thomas.task;
+
 import java.util.ArrayList;
+import thomas.ThomasException;
 
 /**
  * Stores tasks and provides operations for changing the task list.

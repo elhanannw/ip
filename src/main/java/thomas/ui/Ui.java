@@ -1,4 +1,8 @@
+package thomas.ui;
+
 import java.util.Scanner;
+import thomas.task.Task;
+import thomas.task.TaskList;
 
 /**
  * Handles interactions with the user through the command line.
