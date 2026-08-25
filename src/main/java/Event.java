@@ -19,6 +19,16 @@ public class Event extends Task {
     }
 
     /**
+     * Converts Event task into a formatted string for text file storage.
+     *
+     * @return A formatted string representing Event task
+     * */
+    @Override
+    public String toFileFormat() {
+        return "E | " + super.toFileFormat() + " | " + from + " | " + to;
+    }
+
+    /**
      * Prints status, description, start, and end date/time of event task
      *
      * @return Status icon, description, start, and end date/time as a string for the event task.

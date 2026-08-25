@@ -8,6 +8,7 @@ public class Task {
 
     /**
      * Constructs a new Task with specific description.
+     * The task is initially set as not done.
      *
      * @param description The textual description of task.
      * */
@@ -26,21 +27,21 @@ public class Task {
     }
 
     /**
-     * Marks task as completed.
+     * Marks this task as completed.
      * */
     public void markAsDone() {
         this.isDone = true;
     }
 
     /**
-     * Marks task as incomplete.
+     * Marks this task as incomplete.
      * */
     public void markAsNotDone() {
         this.isDone = false;
     }
 
     /**
-     * Check if task is done.
+     * Checks if task is done.
      * */
     public boolean isDone() { return this.isDone; }
 
@@ -51,6 +52,15 @@ public class Task {
      * */
     public String getDescription() {
         return this.description;
+    }
+
+    /**
+     * Converts task into a formatted string for file storage.
+     *
+     * @return Formatted string representation for disk storage.
+     * */
+    public String toFileFormat() {
+        return (isDone ? "Y" : "N") + " | " + description;
     }
 
     /**
