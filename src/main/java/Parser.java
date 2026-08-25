@@ -3,6 +3,38 @@
  */
 public class Parser {
     /**
+     * Converts a complete user command into an executable command object.
+     *
+     * @param fullCommand complete user command
+     * @return command represented by the input
+     */
+    public Command parse(String fullCommand) throws ThomasException {
+        String command = getCommand(fullCommand);
+        if (command.equals("list")) {
+            return new ListCommand();
+        } else if (command.equals("mark")) {
+            return new MarkCommand(getArgument(fullCommand, "mark"), this);
+        } else if (command.equals("unmark")) {
+            return new UnmarkCommand(getArgument(fullCommand, "unmark"), this);
+        } else if (command.equals("delete")) {
+            return new DeleteCommand(getArgument(fullCommand, "delete"), this);
+        } else if (command.equals("todo")) {
+            return new TodoCommand(getArgument(fullCommand, "todo"));
+        } else if (command.equals("deadline")) {
+            String[] details = getDeadlineDetails(fullCommand);
+            return new DeadlineCommand(details[0], details[1]);
+        } else if (command.equals("event")) {
+            String[] details = getEventDetails(fullCommand);
+            return new EventCommand(details[0], details[1], details[2]);
+        } else if (command.equals("on")) {
+            return new OnCommand(getArgument(fullCommand, "on"));
+        } else if (command.equals("bye")) {
+            return new ExitCommand();
+        }
+        return new UnknownCommand();
+    }
+
+    /**
      * Returns the first word of a command.
      *
      * @param command complete user command
