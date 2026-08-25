@@ -162,6 +162,27 @@ public class Storage {
             System.out.println(" !!! cannot save to disk: " + e.getMessage());
         }
     }
+
+    /**
+     * Saves a task list without exposing its internal collection to the caller.
+     *
+     * @param taskList task list to save
+     */
+    public void save(TaskList taskList) {
+        File file = filePath.toFile();
+        try {
+            if (file.getParentFile() != null && !file.getParentFile().exists()) {
+                file.getParentFile().mkdirs();
+            }
+            try (FileWriter fw = new FileWriter(file)) {
+                for (int i = 0; i < taskList.size(); i += 1) {
+                    fw.write(taskList.get(i).toFileFormat() + System.lineSeparator());
+                }
+            }
+        } catch (Exception e) {
+            System.out.println(" !!! cannot save to disk: " + e.getMessage());
+        }
+    }
 }
 
 
