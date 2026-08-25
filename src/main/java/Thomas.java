@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.time.LocalDate;
 import java.util.Scanner;
 
 /**
@@ -213,6 +214,26 @@ public class Thomas {
                         // Save changes to disk
                         storage.save(tasks);
                         printTaskAdded(t, tasks.size());
+                    }
+                    /* on */
+                    else if (command.startsWith("on")) {
+                        String dateInput = command.substring(2).trim();
+                        if (dateInput.isEmpty()) {
+                            throw new ThomasException("Please provide a date. Eg: on 2026-08-09");
+                        }
+
+                        LocalDate targetDate = DateTimeUtil.parseDate(dateInput);
+                        int shown = 0;
+                        System.out.println(" Here are tasks on " + targetDate + ":");
+                        for (int i = 0; i < tasks.size(); i += 1) {
+                            if (tasks.get(i).occursOn(targetDate)) {
+                                shown++;
+                                System.out.println(" " + shown + "." + tasks.get(i));
+                            }
+                        }
+                        if (shown == 0) {
+                            System.out.println(" Lucky broo, got nothing due on " + targetDate + "!");
+                        }
                     } else {
                         throw new ThomasException("I doono what that is, try again mate :>");
                     }

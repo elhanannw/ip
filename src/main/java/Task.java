@@ -1,3 +1,5 @@
+import java.time.LocalDate;
+
 /**
  * Represents a task in task list.
  * Task consists of a description and a completion status.
@@ -52,6 +54,17 @@ public class Task {
      * */
     public String getDescription() {
         return this.description;
+    }
+
+    /**
+     * Checks if this task occurs on the given date.
+     * Base tasks without date/time return false.
+     *
+     * @param date The date to check against.
+     * @return true if task happens on the date; otherwise false.
+     */
+    public boolean occursOn(LocalDate date) {
+        return false;
     }
 
     /**
