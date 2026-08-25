@@ -5,10 +5,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Scanner;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
-import java.util.Locale;
 
 /**
  * Handles loading tasks from and saving tasks to a hard disk file using OS-independent paths.
@@ -113,9 +109,7 @@ public class Storage {
                 throw new ThomasException("Deadline description or date/time empty!");
             }
 
-            // parseDate helper to prevent corruption on txt edits
-            LocalDate byDate = parseDate(by);
-            task = new Deadline(description, by.toString());
+            task = new Deadline(description, by);
 
         } else if (type.equals("E")) {
             int third = line.indexOf('|', second + 1);
@@ -139,9 +133,7 @@ public class Storage {
             if (description.isEmpty() || from.isEmpty()) {
                 throw new ThomasException("Event description or time empty!");
             }
-            LocalDate fromDate = parseDate(from);
-            LocalDate toDate = parseDate(to);
-            task = new Event(description, fromDate.toString(), toDate.toString());
+            task = new Event(description, from, to);
         } else {
             throw new ThomasException("Broo, unknown task type" + type);
         }
@@ -172,21 +164,23 @@ public class Storage {
     }
 
     /**
-     * Supports both standard ISO (yyyy-MM-dd) and display (MMM dd yyyy).
-     * */
-    private LocalDate parseDate(String dateStr) throws ThomasException {
-        String cleanDate = dateStr.trim();
-
-        // Standard ISO: 2026-08-09
+     * Saves a task list without exposing its internal collection to the caller.
+     *
+     * @param taskList task list to save
+     */
+    public void save(TaskList taskList) {
+        File file = filePath.toFile();
         try {
-            return LocalDate.parse(cleanDate);
-        } catch (DateTimeParseException e1) {
-            try {
-                DateTimeFormatter disFormat = DateTimeFormatter.ofPattern("MMM dd yyyy", Locale.ENGLISH);
-                return LocalDate.parse(cleanDate, disFormat);
-            } catch (DateTimeParseException e2) {
-                throw new ThomasException("Invalid date format '" + cleanDate + "'. use yyyy-MM-dd or MMM dd yyyy.");
+            if (file.getParentFile() != null && !file.getParentFile().exists()) {
+                file.getParentFile().mkdirs();
             }
+            try (FileWriter fw = new FileWriter(file)) {
+                for (int i = 0; i < taskList.size(); i += 1) {
+                    fw.write(taskList.get(i).toFileFormat() + System.lineSeparator());
+                }
+            }
+        } catch (Exception e) {
+            System.out.println(" !!! cannot save to disk: " + e.getMessage());
         }
     }
 }
