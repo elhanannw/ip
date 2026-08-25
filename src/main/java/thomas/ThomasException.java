@@ -1,3 +1,5 @@
+package thomas;
+
 /**
  * Represents exception for Thomas chatbot
  * */

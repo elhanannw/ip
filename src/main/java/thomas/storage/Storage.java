@@ -1,3 +1,5 @@
+package thomas.storage;
+
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -5,6 +7,12 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Scanner;
+import thomas.ThomasException;
+import thomas.task.Deadline;
+import thomas.task.Event;
+import thomas.task.Task;
+import thomas.task.TaskList;
+import thomas.task.Todo;
 
 /**
  * Handles loading tasks from and saving tasks to a hard disk file using OS-independent paths.
@@ -184,6 +192,4 @@ public class Storage {
         }
     }
 }
-
-
 

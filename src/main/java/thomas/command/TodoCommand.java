@@ -1,3 +1,12 @@
+package thomas.command;
+
+import thomas.ThomasException;
+import thomas.storage.Storage;
+import thomas.task.Task;
+import thomas.task.TaskList;
+import thomas.task.Todo;
+import thomas.ui.Ui;
+
 /**
  * Adds a todo task to the task list.
  */

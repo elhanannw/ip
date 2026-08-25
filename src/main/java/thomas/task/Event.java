@@ -1,5 +1,9 @@
+package thomas.task;
+
 import java.time.LocalDate;
 import java.time.LocalTime;
+import thomas.ThomasException;
+import thomas.util.DateTimeUtil;
 
 /**
  * Represents a task that occurs within a specific timeframe (start and end date/time).

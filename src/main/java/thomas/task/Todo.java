@@ -1,3 +1,5 @@
+package thomas.task;
+
 /**
  * Represents todo task with no date or time.
  * */

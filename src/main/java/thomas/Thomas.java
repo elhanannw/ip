@@ -1,4 +1,11 @@
+package thomas;
+
 import java.util.Scanner;
+import thomas.command.Command;
+import thomas.command.Parser;
+import thomas.storage.Storage;
+import thomas.task.TaskList;
+import thomas.ui.Ui;
 
 /**
  * Starts Thomas, a command-line task manager app.

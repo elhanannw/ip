@@ -1,11 +1,18 @@
+package thomas.command;
+
+import thomas.ThomasException;
+import thomas.storage.Storage;
+import thomas.task.TaskList;
+import thomas.ui.Ui;
+
 /**
- * Marks a task as not done.
+ * Marks a task as done.
  */
-public class UnmarkCommand extends Command {
+public class MarkCommand extends Command {
     private final String argument;
     private final Parser parser;
 
-    public UnmarkCommand(String argument, Parser parser) {
+    public MarkCommand(String argument, Parser parser) {
         this.argument = argument;
         this.parser = parser;
     }
@@ -13,8 +20,8 @@ public class UnmarkCommand extends Command {
     @Override
     public void execute(TaskList tasks, Ui ui, Storage storage) throws ThomasException {
         int taskIndex = parser.getTaskIndex(argument, tasks.size(), "Pls specify task number to mark.");
-        tasks.unmark(taskIndex);
+        tasks.mark(taskIndex);
         storage.save(tasks);
-        ui.showTaskUnmarked(tasks.get(taskIndex));
+        ui.showTaskMarked(tasks.get(taskIndex));
     }
 }

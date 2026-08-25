@@ -1,3 +1,12 @@
+package thomas.command;
+
+import thomas.ThomasException;
+import thomas.storage.Storage;
+import thomas.task.Event;
+import thomas.task.Task;
+import thomas.task.TaskList;
+import thomas.ui.Ui;
+
 /**
  * Adds an event task to the task list.
  */

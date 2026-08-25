@@ -1,3 +1,7 @@
+package thomas.command;
+
+import thomas.ThomasException;
+
 /**
  * Parses command names and arguments entered by the user.
  */
