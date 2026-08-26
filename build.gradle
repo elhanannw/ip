@@ -48,7 +48,18 @@ jar {
 }
 
 shadowJar {
-    archiveFileName = 'duke.jar'
+    archiveBaseName.set('thomas')
+    archiveClassifier.set('')
+    archiveVersion.set('')
+    archiveFileName = 'thomas.jar'
+
+    manifest {
+        attributes 'Main-Class': application.mainClass.get()
+    }
+}
+
+tasks.named('build') {
+    dependsOn tasks.named('shadowJar')
 }
 
 run {
