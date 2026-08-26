@@ -14,6 +14,7 @@ import thomas.task.Deadline;
 import thomas.task.Event;
 import thomas.task.Task;
 import thomas.task.Todo;
+import thomas.task.TaskList;
 
 class StorageTest {
     @TempDir
@@ -65,5 +66,17 @@ class StorageTest {
         assertEquals(2, loaded.size());
         assertEquals("valid", loaded.get(0).getDescription());
         assertTrue(loaded.get(1).isDone());
+    }
+
+    @Test
+    void save_taskListOverload_persistsTasks() {
+        Storage storage = new Storage(temporaryDirectory.toString(), "tasks.txt");
+        TaskList taskList = new TaskList();
+        taskList.add(new Todo("read book"));
+
+        storage.save(taskList);
+
+        assertEquals(1, storage.load().size());
+        assertEquals("read book", storage.load().get(0).getDescription());
     }
 }
