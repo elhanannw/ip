@@ -14,11 +14,25 @@ public class DeadlineCommand extends Command {
     private final String description;
     private final String by;
 
+    /**
+     * Creates a command that will add a deadline task.
+     *
+     * @param description deadline text entered by the user
+     * @param by due date/time string
+     */
     public DeadlineCommand(String description, String by) {
         this.description = description;
         this.by = by;
     }
 
+    /**
+     * Adds the deadline, saves the list, and confirms the addition.
+     *
+     * @param tasks task list to update
+     * @param ui user interface used for output
+     * @param storage storage used to persist the change
+     * @throws ThomasException if the due date/time cannot be parsed
+     */
     @Override
     public void execute(TaskList tasks, Ui ui, Storage storage) throws ThomasException {
         Task task = new Deadline(description, by);

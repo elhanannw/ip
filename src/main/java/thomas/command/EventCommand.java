@@ -15,12 +15,27 @@ public class EventCommand extends Command {
     private final String from;
     private final String to;
 
+    /**
+     * Creates a command that will add an event task.
+     *
+     * @param description event text entered by the user
+     * @param from start date/time string
+     * @param to end date/time string
+     */
     public EventCommand(String description, String from, String to) {
         this.description = description;
         this.from = from;
         this.to = to;
     }
 
+    /**
+     * Adds the event, saves the list, and confirms the addition.
+     *
+     * @param tasks task list to update
+     * @param ui user interface used for output
+     * @param storage storage used to persist the change
+     * @throws ThomasException if a date/time is invalid or the end is before the start
+     */
     @Override
     public void execute(TaskList tasks, Ui ui, Storage storage) throws ThomasException {
         Task task = new Event(description, from, to);

@@ -13,10 +13,23 @@ import thomas.util.DateTimeUtil;
 public class OnCommand extends Command {
     private final String dateInput;
 
+    /**
+     * Creates a command that lists tasks occurring on a date.
+     *
+     * @param dateInput date string entered by the user
+     */
     public OnCommand(String dateInput) {
         this.dateInput = dateInput;
     }
 
+    /**
+     * Parses the date and prints matching deadlines and events.
+     *
+     * @param tasks task list to search
+     * @param ui user interface used for output
+     * @param storage unused for this command
+     * @throws ThomasException if the date is missing or cannot be parsed
+     */
     @Override
     public void execute(TaskList tasks, Ui ui, Storage storage) throws ThomasException {
         if (dateInput.isEmpty()) {

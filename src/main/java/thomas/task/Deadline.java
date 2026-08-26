@@ -36,6 +36,11 @@ public class Deadline extends Task {
         return this.byDate;
     }
 
+    /**
+     * Gets the optional due time of this deadline.
+     *
+     * @return the due time, or {@code null} if only a date was given
+     */
     public LocalTime getByTime() {
         return this.byTime;
     }
@@ -50,6 +55,12 @@ public class Deadline extends Task {
         return "D | " + super.toFileFormat() + " | " + DateTimeUtil.toStorageString(byDate, byTime);
     }
 
+    /**
+     * Checks whether this deadline falls on the given date.
+     *
+     * @param date date to compare against
+     * @return {@code true} if the due date matches
+     */
     @Override
     public boolean occursOn(LocalDate date) {
         return byDate.equals(date);
