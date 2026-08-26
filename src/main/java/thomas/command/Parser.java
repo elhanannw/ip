@@ -11,6 +11,7 @@ public class Parser {
      *
      * @param fullCommand complete user command
      * @return command represented by the input
+     * @throws ThomasException if a known command is missing required arguments
      */
     public Command parse(String fullCommand) throws ThomasException {
         String command = getCommand(fullCommand);
@@ -63,7 +64,9 @@ public class Parser {
     /**
      * Parses a task number from a command argument.
      *
-     * @param argument task number argument
+     * @param argument task number argument as typed by the user
+     * @param taskCount number of tasks currently in the list
+     * @param emptyMessage error shown when the argument is missing
      * @return zero-based task index
      * @throws ThomasException if the argument is empty or outside the list
      */

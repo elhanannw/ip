@@ -12,11 +12,25 @@ public class MarkCommand extends Command {
     private final String argument;
     private final Parser parser;
 
+    /**
+     * Creates a command that marks a task as done.
+     *
+     * @param argument 1-based task number as typed by the user
+     * @param parser parser used to convert the argument into an index
+     */
     public MarkCommand(String argument, Parser parser) {
         this.argument = argument;
         this.parser = parser;
     }
 
+    /**
+     * Marks the requested task done, saves the list, and confirms the change.
+     *
+     * @param tasks task list to update
+     * @param ui user interface used for output
+     * @param storage storage used to persist the change
+     * @throws ThomasException if the task number is missing, invalid, or already done
+     */
     @Override
     public void execute(TaskList tasks, Ui ui, Storage storage) throws ThomasException {
         int taskIndex = parser.getTaskIndex(argument, tasks.size(), "Pls specify task number to mark.");

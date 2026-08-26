@@ -45,8 +45,10 @@ public class Task {
     }
 
     /**
-     * Checks if task is done.
-     * */
+     * Checks whether this task is completed.
+     *
+     * @return {@code true} if the task is done
+     */
     public boolean isDone() { return this.isDone; }
 
     /**

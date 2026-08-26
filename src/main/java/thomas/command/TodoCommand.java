@@ -13,10 +13,23 @@ import thomas.ui.Ui;
 public class TodoCommand extends Command {
     private final String description;
 
+    /**
+     * Creates a command that will add a todo with the given description.
+     *
+     * @param description todo text entered by the user
+     */
     public TodoCommand(String description) {
         this.description = description;
     }
 
+    /**
+     * Adds the todo, saves the list, and confirms the addition.
+     *
+     * @param tasks task list to update
+     * @param ui user interface used for output
+     * @param storage storage used to persist the change
+     * @throws ThomasException if the description is empty
+     */
     @Override
     public void execute(TaskList tasks, Ui ui, Storage storage) throws ThomasException {
         if (description.isEmpty()) {

@@ -33,7 +33,7 @@ public class Storage {
      * Loads tasks from disk file
      *
      * @return ArrayList of restored task objects.
-     * */
+     */
     public ArrayList<Task> load() {
         ArrayList<Task> tasks = new ArrayList<>();
         File file = filePath.toFile();

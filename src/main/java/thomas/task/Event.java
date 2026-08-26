@@ -46,12 +46,17 @@ public class Event extends Task {
         return this.fromDate;
     }
 
+    /**
+     * Retrieves the optional start time.
+     *
+     * @return the start time, or {@code null} if only a date was given
+     */
     public LocalTime getFromTime() {
         return this.fromTime;
     }
 
     /**
-     * retries the end date.
+     * Retrieves the end date.
      *
      * @return The end LocalDate instance of the event.
      * */
@@ -59,6 +64,11 @@ public class Event extends Task {
         return this.toDate;
     }
 
+    /**
+     * Retrieves the optional end time.
+     *
+     * @return the end time, or {@code null} if only a date was given
+     */
     public LocalTime getToTime() {
         return this.toTime;
     }
@@ -76,6 +86,12 @@ public class Event extends Task {
                 + DateTimeUtil.toStorageString(toDate, toTime);
     }
 
+    /**
+     * Checks whether the given date falls within this event's start and end dates.
+     *
+     * @param date date to compare against
+     * @return {@code true} if the date is between start and end, inclusive
+     */
     @Override
     public boolean occursOn(LocalDate date) {
         return !(date.isBefore(fromDate) || date.isAfter(toDate));
