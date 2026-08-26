@@ -1,6 +1,7 @@
 package thomas.ui;
 
 import java.util.Scanner;
+import java.util.ArrayList;
 import thomas.task.Task;
 import thomas.task.TaskList;
 
@@ -63,6 +64,21 @@ public class Ui {
         System.out.println(" Here are the tasks in your list:");
         for (int i = 0; i < tasks.size(); i += 1) {
             System.out.println(" " + (i + 1) + "." + tasks.get(i));
+        }
+    }
+
+    /**
+     * Displays tasks that match a keyword search.
+     *
+     * @param matchingTasks matching tasks to display
+     */
+    public void showMatchingTasks(ArrayList<Task> matchingTasks) {
+        System.out.println(" Here are the matching tasks in your list:");
+        for (int i = 0; i < matchingTasks.size(); i += 1) {
+            System.out.println(" " + (i + 1) + "." + matchingTasks.get(i));
+        }
+        if (matchingTasks.isEmpty()) {
+            System.out.println(" Broo, no matching tasks found.");
         }
     }
 

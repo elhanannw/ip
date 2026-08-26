@@ -60,4 +60,22 @@ public class TaskList {
         }
         task.markAsNotDone();
     }
+
+    /**
+     * Returns all tasks with descriptions containing the given keyword.
+     * Matching is case-insensitive.
+     *
+     * @param keyword text to find in task descriptions
+     * @return matching tasks
+     */
+    public ArrayList<Task> findByKeyword(String keyword) {
+        String normalizedKeyword = keyword.toLowerCase();
+        ArrayList<Task> matchingTasks = new ArrayList<>();
+        for (Task task : tasks) {
+            if (task.getDescription().toLowerCase().contains(normalizedKeyword)) {
+                matchingTasks.add(task);
+            }
+        }
+        return matchingTasks;
+    }
 }

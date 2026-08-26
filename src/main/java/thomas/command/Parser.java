@@ -32,6 +32,8 @@ public class Parser {
             return new EventCommand(details[0], details[1], details[2]);
         } else if (command.equals("on")) {
             return new OnCommand(getArgument(fullCommand, "on"));
+        } else if (command.equals("find")) {
+            return new FindCommand(getArgument(fullCommand, "find"));
         } else if (command.equals("bye")) {
             return new ExitCommand();
         }

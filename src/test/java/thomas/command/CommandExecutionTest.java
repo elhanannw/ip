@@ -90,6 +90,25 @@ class CommandExecutionTest {
                 new UnknownCommand().execute(new TaskList(), new Ui(), storage()));
     }
 
+    @Test
+    void findCommand_execute_withKeyword_doesNotMutateTaskList() throws Exception {
+        TaskList tasks = new TaskList();
+        tasks.add(new Todo("read book"));
+        tasks.add(new Deadline("return book", "2026-06-06"));
+
+        new FindCommand("book").execute(tasks, new Ui(), storage());
+
+        assertEquals(2, tasks.size());
+        assertEquals("read book", tasks.get(0).getDescription());
+        assertEquals("return book", tasks.get(1).getDescription());
+    }
+
+    @Test
+    void findCommand_execute_emptyKeyword_throwsException() {
+        assertThrows(ThomasException.class, () ->
+                new FindCommand("").execute(new TaskList(), new Ui(), storage()));
+    }
+
     private Storage storage() {
         return new Storage(temporaryDirectory.toString(), "tasks.txt");
     }
