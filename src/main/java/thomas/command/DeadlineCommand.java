@@ -14,6 +14,12 @@ public class DeadlineCommand extends Command {
     private final String description;
     private final String by;
 
+    /**
+     * Creates a command that adds a deadline task.
+     *
+     * @param description Description of the deadline.
+     * @param by Due date/time of the deadline.
+     */
     public DeadlineCommand(String description, String by) {
         this.description = description;
         this.by = by;

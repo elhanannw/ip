@@ -2,12 +2,13 @@ package thomas.task;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+
 import thomas.ThomasException;
 import thomas.util.DateTimeUtil;
 
 /**
- * Represents a task that occurs within a specific timeframe (start and end date/time).
- * */
+ * Represents a task that occurs within a start and end date/time.
+ */
 public class Event extends Task {
     protected LocalDate fromDate;
     protected LocalTime fromTime;
@@ -15,13 +16,13 @@ public class Event extends Task {
     protected LocalTime toTime;
 
     /**
-     * Constructs a new Event task with specific description, start date/time, and end date/time.
+     * Creates an event with the given description, start date/time, and end date/time.
      *
-     * @param description The textual description of task.
-     * @param from The start date/time
-     * @param to The end date/time
-     * @throws ThomasException If either date format is invalid.
-     * */
+     * @param description Textual description of the task.
+     * @param from Start date/time.
+     * @param to End date/time.
+     * @throws ThomasException If a date format is invalid or the end is before the start.
+     */
     public Event(String description, String from, String to) throws ThomasException {
         super(description);
         DateTimeUtil.ParsedDateTime parsedFrom = DateTimeUtil.parseDateTime(from);
@@ -37,11 +38,6 @@ public class Event extends Task {
         }
     }
 
-    /**
-     * Retrieves the start date.
-     *
-     * @return The start LocalDate instance of the event.
-     * */
     public LocalDate getFromDate() {
         return this.fromDate;
     }
@@ -50,11 +46,6 @@ public class Event extends Task {
         return this.fromTime;
     }
 
-    /**
-     * retries the end date.
-     *
-     * @return The end LocalDate instance of the event.
-     * */
     public LocalDate getToDate() {
         return this.toDate;
     }
@@ -64,10 +55,10 @@ public class Event extends Task {
     }
 
     /**
-     * Converts Event task into a formatted string for text file storage.
+     * Returns a formatted string for file storage.
      *
-     * @return A formatted string representing Event task
-     * */
+     * @return Formatted string representing this event task.
+     */
     @Override
     public String toFileFormat() {
         return "E | " + super.toFileFormat() + " | "
@@ -82,10 +73,10 @@ public class Event extends Task {
     }
 
     /**
-     * Prints status, description, start, and end date/time of event task
+     * Returns the status, description, start, and end date/time of this event.
      *
-     * @return Status icon, description, start, and end date/time as a string for the event task.
-     * */
+     * @return Status icon, description, start, and end date/time as a string.
+     */
     @Override
     public String toString() {
         return "[E]" + super.toString()

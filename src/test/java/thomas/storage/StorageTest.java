@@ -8,13 +8,15 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
+
 import thomas.task.Deadline;
 import thomas.task.Event;
 import thomas.task.Task;
-import thomas.task.Todo;
 import thomas.task.TaskList;
+import thomas.task.Todo;
 
 class StorageTest {
     @TempDir

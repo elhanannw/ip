@@ -13,6 +13,12 @@ public class DeleteCommand extends Command {
     private final String argument;
     private final Parser parser;
 
+    /**
+     * Creates a command that deletes a task.
+     *
+     * @param argument Task number entered by the user.
+     * @param parser Parser used to read the task index.
+     */
     public DeleteCommand(String argument, Parser parser) {
         this.argument = argument;
         this.parser = parser;

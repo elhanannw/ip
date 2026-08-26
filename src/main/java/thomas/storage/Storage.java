@@ -7,6 +7,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Scanner;
+
 import thomas.ThomasException;
 import thomas.task.Deadline;
 import thomas.task.Event;
@@ -16,24 +17,24 @@ import thomas.task.Todo;
 
 /**
  * Handles loading tasks from and saving tasks to a hard disk file using OS-independent paths.
- * */
+ */
 public class Storage {
     private final Path filePath;
 
     /**
-     * Constructs a storage instance with OS-independent relative path.
+     * Creates a storage instance with an OS-independent relative path.
      *
-     * @param relativePath Folder path segment and file name.
-     * */
+     * @param relativePath Folder path segments and file name.
+     */
     public Storage(String... relativePath) {
         this.filePath = Paths.get("", relativePath);
     }
 
     /**
-     * Loads tasks from disk file
+     * Loads tasks from the disk file.
      *
-     * @return ArrayList of restored task objects.
-     * */
+     * @return Restored task objects.
+     */
     public ArrayList<Task> load() {
         ArrayList<Task> tasks = new ArrayList<>();
         File file = filePath.toFile();
@@ -74,12 +75,12 @@ public class Storage {
     }
 
     /**
-     * Parses a single file line into corresponding Task object.
+     * Parses a single file line into the corresponding task.
      *
-     * @param line A single line from storage file.
-     * @return The parsed task object.
-     * @throws ThomasException if invalid or corrupt.
-     * */
+     * @param line A single line from the storage file.
+     * @return The parsed task.
+     * @throws ThomasException If the line is invalid or corrupt.
+     */
     private Task parseLineToTask(String line) throws ThomasException {
         int first = line.indexOf('|');
         if (first == -1) {
@@ -152,10 +153,10 @@ public class Storage {
     }
 
     /**
-     * Saves current list of tasks to disk file.
+     * Saves the current list of tasks to the disk file.
      *
-     * @param tasks ArrayList of tasks to save.
-     * */
+     * @param tasks Tasks to save.
+     */
     public void save(ArrayList<Task> tasks) {
         File file = filePath.toFile();
         try {
@@ -164,7 +165,8 @@ public class Storage {
             }
             try (FileWriter fw = new FileWriter(file)) {
                 for (Task task : tasks) {
-                    fw.write(task.toFileFormat() + System.lineSeparator());}
+                    fw.write(task.toFileFormat() + System.lineSeparator());
+                }
             }
         } catch (Exception e) {
             System.out.println(" !!! cannot save to disk: " + e.getMessage());
@@ -174,7 +176,7 @@ public class Storage {
     /**
      * Saves a task list without exposing its internal collection to the caller.
      *
-     * @param taskList task list to save
+     * @param taskList Task list to save.
      */
     public void save(TaskList taskList) {
         File file = filePath.toFile();

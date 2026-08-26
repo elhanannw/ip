@@ -1,6 +1,7 @@
 package thomas;
 
 import java.util.Scanner;
+
 import thomas.command.Command;
 import thomas.command.Parser;
 import thomas.storage.Storage;
@@ -28,7 +29,7 @@ public class Thomas {
     /**
      * Creates Thomas with a configurable storage path.
      *
-     * @param filePath folder and file path segments
+     * @param filePath Folder and file path segments.
      */
     public Thomas(String... filePath) {
         this.ui = new Ui();
@@ -38,7 +39,7 @@ public class Thomas {
     }
 
     /**
-     * Starts the command loop.
+     * Starts the command loop until the user exits.
      */
     public void run() {
         ui.showWelcome();
@@ -66,9 +67,9 @@ public class Thomas {
     }
 
     /**
-     * Thomas application main entry point.
+     * Starts the Thomas application.
      *
-     * @param args command-line arguments (not used)
+     * @param args Command-line arguments (unused).
      */
     public static void main(String[] args) {
         new Thomas().run();

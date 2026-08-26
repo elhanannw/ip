@@ -1,6 +1,7 @@
 package thomas.task;
 
 import java.util.ArrayList;
+
 import thomas.ThomasException;
 
 /**
@@ -19,12 +20,17 @@ public class TaskList {
     /**
      * Creates a task list from existing tasks.
      *
-     * @param tasks tasks to store
+     * @param tasks Tasks to store.
      */
     public TaskList(ArrayList<Task> tasks) {
         this.tasks = tasks;
     }
 
+    /**
+     * Adds a task to the end of the list.
+     *
+     * @param task Task to add.
+     */
     public void add(Task task) {
         tasks.add(task);
     }
@@ -33,6 +39,12 @@ public class TaskList {
         return tasks.get(index);
     }
 
+    /**
+     * Removes the task at the given index.
+     *
+     * @param index Zero-based index of the task.
+     * @return Removed task.
+     */
     public Task delete(int index) {
         return tasks.remove(index);
     }
@@ -45,6 +57,12 @@ public class TaskList {
         return tasks;
     }
 
+    /**
+     * Marks the task at the given index as done.
+     *
+     * @param index Zero-based index of the task.
+     * @throws ThomasException If the task is already done.
+     */
     public void mark(int index) throws ThomasException {
         Task task = get(index);
         if (task.isDone()) {
@@ -53,6 +71,12 @@ public class TaskList {
         task.markAsDone();
     }
 
+    /**
+     * Marks the task at the given index as not done.
+     *
+     * @param index Zero-based index of the task.
+     * @throws ThomasException If the task is already not done.
+     */
     public void unmark(int index) throws ThomasException {
         Task task = get(index);
         if (!task.isDone()) {

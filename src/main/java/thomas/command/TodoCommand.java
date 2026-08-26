@@ -13,6 +13,11 @@ import thomas.ui.Ui;
 public class TodoCommand extends Command {
     private final String description;
 
+    /**
+     * Creates a command that adds a todo task.
+     *
+     * @param description Description of the todo.
+     */
     public TodoCommand(String description) {
         this.description = description;
     }

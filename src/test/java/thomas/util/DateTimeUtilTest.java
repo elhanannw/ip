@@ -6,7 +6,9 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+
 import org.junit.jupiter.api.Test;
+
 import thomas.ThomasException;
 
 class DateTimeUtilTest {

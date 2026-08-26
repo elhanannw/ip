@@ -1,6 +1,8 @@
 package thomas.ui;
 
+import java.time.LocalDate;
 import java.util.Scanner;
+
 import thomas.task.Task;
 import thomas.task.TaskList;
 
@@ -29,8 +31,8 @@ public class Ui {
     /**
      * Reads one command from the user.
      *
-     * @param scanner scanner connected to user input
-     * @return the next command, or null when input ends
+     * @param scanner Scanner connected to user input.
+     * @return The next command, or null when input ends.
      */
     public String readCommand(Scanner scanner) {
         if (!scanner.hasNextLine()) {
@@ -57,7 +59,7 @@ public class Ui {
     /**
      * Displays all tasks in the list.
      *
-     * @param tasks task list to display
+     * @param tasks Task list to display.
      */
     public void showTasks(TaskList tasks) {
         System.out.println(" Here are the tasks in your list:");
@@ -69,10 +71,10 @@ public class Ui {
     /**
      * Displays tasks occurring on a particular date.
      *
-     * @param tasks task list to search
-     * @param date date being searched
+     * @param tasks Task list to search.
+     * @param date Date being searched.
      */
-    public void showTasksOn(TaskList tasks, java.time.LocalDate date) {
+    public void showTasksOn(TaskList tasks, LocalDate date) {
         int shown = 0;
         System.out.println(" Here are tasks on " + date + ":");
         for (int i = 0; i < tasks.size(); i += 1) {
@@ -89,8 +91,8 @@ public class Ui {
     /**
      * Displays the confirmation for a newly added task.
      *
-     * @param task task that was added
-     * @param totalTask current task count
+     * @param task Task that was added.
+     * @param totalTask Current task count.
      */
     public void showTaskAdded(Task task, int totalTask) {
         System.out.println(" Got it, added this task:");
@@ -101,7 +103,7 @@ public class Ui {
     /**
      * Displays a task completion confirmation.
      *
-     * @param task task that was marked
+     * @param task Task that was marked.
      */
     public void showTaskMarked(Task task) {
         System.out.println(" Nice! Task has been marked as done:");
@@ -111,7 +113,7 @@ public class Ui {
     /**
      * Displays an incomplete-task confirmation.
      *
-     * @param task task that was unmarked
+     * @param task Task that was unmarked.
      */
     public void showTaskUnmarked(Task task) {
         System.out.println(" Ok, task has been marked as not done:");
@@ -121,8 +123,8 @@ public class Ui {
     /**
      * Displays a deletion confirmation.
      *
-     * @param task task that was deleted
-     * @param remainingTasks number of tasks left
+     * @param task Task that was deleted.
+     * @param remainingTasks Number of tasks left.
      */
     public void showTaskDeleted(Task task, int remainingTasks) {
         System.out.println(" Alright! This task has been deleted:");
@@ -133,7 +135,7 @@ public class Ui {
     /**
      * Displays a user-facing error.
      *
-     * @param message error message
+     * @param message Error message.
      */
     public void showError(String message) {
         System.out.println("oooooooof :<< " + message);

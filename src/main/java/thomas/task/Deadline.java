@@ -2,24 +2,24 @@ package thomas.task;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+
 import thomas.ThomasException;
 import thomas.util.DateTimeUtil;
 
 /**
  * Represents a task with a deadline to be completed by.
- * */
+ */
 public class Deadline extends Task {
-
     protected LocalDate byDate;
     protected LocalTime byTime;
 
     /**
-     * Constructs a new Deadline task with specific description and due date/time.
+     * Creates a deadline task with the given description and due date/time.
      *
-     * @param description The textual description of task.
-     * @param by The target date or time for completion.
-     * @throws ThomasException If date string format invalid.
-     * */
+     * @param description Textual description of the task.
+     * @param by Target date or time for completion.
+     * @throws ThomasException If the date string format is invalid.
+     */
     public Deadline(String description, String by) throws ThomasException {
         super(description);
         DateTimeUtil.ParsedDateTime parsed = DateTimeUtil.parseDateTime(by);
@@ -27,11 +27,6 @@ public class Deadline extends Task {
         this.byTime = parsed.getTime();
     }
 
-    /**
-     * Gets parsed deadline date object.
-     *
-     * @return The LocalDate instance of the deadline.
-     * */
     public LocalDate getByDate() {
         return this.byDate;
     }
@@ -41,10 +36,10 @@ public class Deadline extends Task {
     }
 
     /**
-     * Converts Deadline task into a formatted string for text file storage.
+     * Returns a formatted string for file storage.
      *
-     * @return A formatted string representing Deadline task
-     * */
+     * @return Formatted string representing this deadline task.
+     */
     @Override
     public String toFileFormat() {
         return "D | " + super.toFileFormat() + " | " + DateTimeUtil.toStorageString(byDate, byTime);
@@ -56,10 +51,10 @@ public class Deadline extends Task {
     }
 
     /**
-     * Prints status, description and due date/time of deadline task
+     * Returns the status, description, and due date/time of this deadline.
      *
-     * @return Status icon, description, and due date/time as a string for the deadline task.
-     * */
+     * @return Status icon, description, and due date/time as a string.
+     */
     @Override
     public String toString() {
         return "[D]" + super.toString() + " (by: " + DateTimeUtil.toDisplayString(byDate, byTime) + ")";
