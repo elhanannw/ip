@@ -5,6 +5,7 @@ import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.Locale;
+
 import thomas.ThomasException;
 
 /**
@@ -13,10 +14,13 @@ import thomas.ThomasException;
 public class DateTimeUtil {
     private static final DateTimeFormatter ISO_DATE = DateTimeFormatter.ISO_LOCAL_DATE;
     private static final DateTimeFormatter SLASH_DATE = DateTimeFormatter.ofPattern("d/M/yyyy");
-    private static final DateTimeFormatter LEGACY_DISPLAY_DATE = DateTimeFormatter.ofPattern("MMM dd yyyy", Locale.ENGLISH);
+    private static final DateTimeFormatter LEGACY_DISPLAY_DATE =
+            DateTimeFormatter.ofPattern("MMM dd yyyy", Locale.ENGLISH);
     private static final DateTimeFormatter TIME_COMPACT = DateTimeFormatter.ofPattern("HHmm");
-    private static final DateTimeFormatter DISPLAY_DATE = DateTimeFormatter.ofPattern("MMM dd yyyy", Locale.ENGLISH);
-    private static final DateTimeFormatter DISPLAY_DATE_TIME = DateTimeFormatter.ofPattern("MMM dd yyyy, h:mma", Locale.ENGLISH);
+    private static final DateTimeFormatter DISPLAY_DATE =
+            DateTimeFormatter.ofPattern("MMM dd yyyy", Locale.ENGLISH);
+    private static final DateTimeFormatter DISPLAY_DATE_TIME =
+            DateTimeFormatter.ofPattern("MMM dd yyyy, h:mma", Locale.ENGLISH);
 
     /**
      * Represents a parsed date with an optional time component.
@@ -26,10 +30,10 @@ public class DateTimeUtil {
         private final LocalTime time;
 
         /**
-         * Creates a parsed date/time pair.
+         * Creates a parsed date/time value.
          *
-         * @param date required calendar date
-         * @param time optional time of day, or {@code null} if omitted
+         * @param date Parsed date.
+         * @param time Parsed time, or null if none was given.
          */
         public ParsedDateTime(LocalDate date, LocalTime time) {
             this.date = date;
@@ -58,9 +62,9 @@ public class DateTimeUtil {
     /**
      * Parses date input in yyyy-MM-dd or d/M/yyyy with optional HHmm time.
      *
-     * @param input date, optionally followed by a compact time
-     * @return parsed date and optional time
-     * @throws ThomasException if the value is empty or not in a supported format
+     * @param input Date/time text entered by the user.
+     * @return Parsed date and optional time.
+     * @throws ThomasException If the input is empty or not a supported format.
      */
     public static ParsedDateTime parseDateTime(String input) throws ThomasException {
         String trimmed = input.trim();
@@ -70,7 +74,8 @@ public class DateTimeUtil {
 
         String[] parts = trimmed.split("\\s+");
         if (parts.length > 2) {
-            throw new ThomasException("Broo wrong date/time format. Use yyyy-MM-dd or d/M/yyyy, optionally with HHmm.");
+            throw new ThomasException(
+                    "Broo wrong date/time format. Use yyyy-MM-dd or d/M/yyyy, optionally with HHmm.");
         }
 
         LocalDate date = parseDate(parts[0]);
@@ -90,9 +95,9 @@ public class DateTimeUtil {
     /**
      * Parses a date in yyyy-MM-dd, d/M/yyyy, or MMM dd yyyy.
      *
-     * @param input date string
-     * @return parsed date
-     * @throws ThomasException if the date is not in a supported format
+     * @param input Date text entered by the user.
+     * @return Parsed date.
+     * @throws ThomasException If the input is not a supported date format.
      */
     public static LocalDate parseDate(String input) throws ThomasException {
         String trimmed = input.trim();
@@ -113,11 +118,10 @@ public class DateTimeUtil {
     }
 
     /**
-     * Formats date/time for UI output.
+     * Returns a date/time string for UI output.
      *
-     * @param date date to display
-     * @param time optional time, or {@code null} to show the date only
-     * @return human-readable date or date-time
+     * @param date Date to format.
+     * @param time Time to format, or null for date only.
      */
     public static String toDisplayString(LocalDate date, LocalTime time) {
         if (time == null) {
@@ -128,11 +132,10 @@ public class DateTimeUtil {
     }
 
     /**
-     * Formats date/time for file storage.
+     * Returns a date/time string for file storage.
      *
-     * @param date date to store
-     * @param time optional time, or {@code null} to store the date only
-     * @return ISO date, optionally followed by HHmm time
+     * @param date Date to format.
+     * @param time Time to format, or null for date only.
      */
     public static String toStorageString(LocalDate date, LocalTime time) {
         if (time == null) {

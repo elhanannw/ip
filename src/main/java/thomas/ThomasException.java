@@ -1,13 +1,13 @@
 package thomas;
 
 /**
- * Thrown when a Thomas command cannot be completed.
+ * Represents an exception raised by the Thomas chatbot.
  */
 public class ThomasException extends Exception {
     /**
-     * Creates an exception with a user-facing message.
+     * Creates a Thomas exception with the given message.
      *
-     * @param message explanation shown to the user
+     * @param message Description of the error.
      */
     public ThomasException(String message) {
         super(message);

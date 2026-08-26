@@ -1,6 +1,7 @@
 package thomas.command;
 
 import java.time.LocalDate;
+
 import thomas.ThomasException;
 import thomas.storage.Storage;
 import thomas.task.TaskList;
@@ -16,7 +17,7 @@ public class OnCommand extends Command {
     /**
      * Creates a command that lists tasks occurring on a date.
      *
-     * @param dateInput date string entered by the user
+     * @param dateInput Date entered by the user.
      */
     public OnCommand(String dateInput) {
         this.dateInput = dateInput;

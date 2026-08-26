@@ -9,9 +9,9 @@ public class Parser {
     /**
      * Converts a complete user command into an executable command object.
      *
-     * @param fullCommand complete user command
-     * @return command represented by the input
-     * @throws ThomasException if a known command is missing required arguments
+     * @param fullCommand Complete user command.
+     * @return Command represented by the input.
+     * @throws ThomasException If required command parts are missing or invalid.
      */
     public Command parse(String fullCommand) throws ThomasException {
         String command = getCommand(fullCommand);
@@ -42,8 +42,8 @@ public class Parser {
     /**
      * Returns the first word of a command.
      *
-     * @param command complete user command
-     * @return command name
+     * @param command Complete user command.
+     * @return Command name.
      */
     public String getCommand(String command) {
         int space = command.indexOf(' ');
@@ -53,9 +53,9 @@ public class Parser {
     /**
      * Returns text following a command prefix.
      *
-     * @param command complete user command
-     * @param prefix command prefix
-     * @return trimmed argument text
+     * @param command Complete user command.
+     * @param prefix Command prefix.
+     * @return Trimmed argument text.
      */
     public String getArgument(String command, String prefix) {
         return command.substring(prefix.length()).trim();
@@ -64,11 +64,11 @@ public class Parser {
     /**
      * Parses a task number from a command argument.
      *
-     * @param argument task number argument as typed by the user
-     * @param taskCount number of tasks currently in the list
-     * @param emptyMessage error shown when the argument is missing
-     * @return zero-based task index
-     * @throws ThomasException if the argument is empty or outside the list
+     * @param argument Task number argument.
+     * @param taskCount Number of tasks in the list.
+     * @param emptyMessage Error message when the argument is empty.
+     * @return Zero-based task index.
+     * @throws ThomasException If the argument is empty or outside the list.
      */
     public int getTaskIndex(String argument, int taskCount, String emptyMessage) throws ThomasException {
         if (argument.isEmpty()) {
@@ -76,7 +76,7 @@ public class Parser {
         }
         int taskIndex = Integer.parseInt(argument) - 1;
         if (taskIndex < 0 || taskIndex >= taskCount) {
-            throw new ThomasException("Task number doesnt exist.");
+            throw new ThomasException("Task number does not exist.");
         }
         return taskIndex;
     }
@@ -84,9 +84,9 @@ public class Parser {
     /**
      * Extracts a deadline description and date/time.
      *
-     * @param command complete deadline command
-     * @return description and date/time
-     * @throws ThomasException if required parts are absent
+     * @param command Complete deadline command.
+     * @return Description and date/time.
+     * @throws ThomasException If required parts are absent.
      */
     public String[] getDeadlineDetails(String command) throws ThomasException {
         int byIndex = command.indexOf("/by");
@@ -107,9 +107,9 @@ public class Parser {
     /**
      * Extracts an event description, start, and end date/time.
      *
-     * @param command complete event command
-     * @return description, start, and end date/time
-     * @throws ThomasException if required parts are absent
+     * @param command Complete event command.
+     * @return Description, start, and end date/time.
+     * @throws ThomasException If required parts are absent.
      */
     public String[] getEventDetails(String command) throws ThomasException {
         int fromIndex = command.indexOf("/from");

@@ -14,9 +14,9 @@ public class TodoCommand extends Command {
     private final String description;
 
     /**
-     * Creates a command that will add a todo with the given description.
+     * Creates a command that adds a todo task.
      *
-     * @param description todo text entered by the user
+     * @param description Description of the todo.
      */
     public TodoCommand(String description) {
         this.description = description;

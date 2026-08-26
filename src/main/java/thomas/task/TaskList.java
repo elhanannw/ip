@@ -1,6 +1,7 @@
 package thomas.task;
 
 import java.util.ArrayList;
+
 import thomas.ThomasException;
 
 /**
@@ -19,16 +20,16 @@ public class TaskList {
     /**
      * Creates a task list from existing tasks.
      *
-     * @param tasks tasks to store
+     * @param tasks Tasks to store.
      */
     public TaskList(ArrayList<Task> tasks) {
         this.tasks = tasks;
     }
 
     /**
-     * Appends a task to the end of the list.
+     * Adds a task to the end of the list.
      *
-     * @param task task to add
+     * @param task Task to add.
      */
     public void add(Task task) {
         tasks.add(task);
@@ -45,10 +46,10 @@ public class TaskList {
     }
 
     /**
-     * Removes and returns the task at the given zero-based index.
+     * Removes the task at the given index.
      *
-     * @param index position of the task to remove
-     * @return the removed task
+     * @param index Zero-based index of the task.
+     * @return Removed task.
      */
     public Task delete(int index) {
         return tasks.remove(index);
@@ -73,10 +74,10 @@ public class TaskList {
     }
 
     /**
-     * Marks the task at {@code index} as done.
+     * Marks the task at the given index as done.
      *
-     * @param index zero-based position of the task
-     * @throws ThomasException if the task is already done
+     * @param index Zero-based index of the task.
+     * @throws ThomasException If the task is already done.
      */
     public void mark(int index) throws ThomasException {
         Task task = get(index);
@@ -87,10 +88,10 @@ public class TaskList {
     }
 
     /**
-     * Marks the task at {@code index} as not done.
+     * Marks the task at the given index as not done.
      *
-     * @param index zero-based position of the task
-     * @throws ThomasException if the task is already not done
+     * @param index Zero-based index of the task.
+     * @throws ThomasException If the task is already not done.
      */
     public void unmark(int index) throws ThomasException {
         Task task = get(index);

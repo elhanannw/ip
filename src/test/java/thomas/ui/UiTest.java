@@ -8,7 +8,9 @@ import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.time.LocalDate;
 import java.util.Scanner;
+
 import org.junit.jupiter.api.Test;
+
 import thomas.task.TaskList;
 import thomas.task.Todo;
 

@@ -1,32 +1,33 @@
 package thomas.task;
 
 /**
- * Represents todo task with no date or time.
- * */
+ * Represents a todo task with no date or time.
+ */
 public class Todo extends Task {
-
     /**
-     * Constructs a Todo task with specific description.
+     * Creates a todo task with the given description.
      *
-     * @param description The textual description of task.
-     * */
+     * @param description Textual description of the task.
+     */
     public Todo(String description) {
         super(description);
     }
 
     /**
-     * Converts Todo task into a formatted string for text file storage.
+     * Returns a formatted string for file storage.
      *
-     * @return A formatted string representing Todo task
-     * */
+     * @return Formatted string representing this todo task.
+     */
     @Override
-    public String toFileFormat() { return "T | " + super.toFileFormat(); }
+    public String toFileFormat() {
+        return "T | " + super.toFileFormat();
+    }
 
     /**
-     * Prints status and description of todo task
+     * Returns the status and description of this todo task.
      *
-     * @return Status icon and description as a string for the todo task.
-     * */
+     * @return Status icon and description as a string.
+     */
     @Override
     public String toString() {
         return "[T]" + super.toString();

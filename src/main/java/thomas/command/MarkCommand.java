@@ -15,8 +15,8 @@ public class MarkCommand extends Command {
     /**
      * Creates a command that marks a task as done.
      *
-     * @param argument 1-based task number as typed by the user
-     * @param parser parser used to convert the argument into an index
+     * @param argument Task number entered by the user.
+     * @param parser Parser used to read the task index.
      */
     public MarkCommand(String argument, Parser parser) {
         this.argument = argument;

@@ -16,11 +16,11 @@ public class EventCommand extends Command {
     private final String to;
 
     /**
-     * Creates a command that will add an event task.
+     * Creates a command that adds an event task.
      *
-     * @param description event text entered by the user
-     * @param from start date/time string
-     * @param to end date/time string
+     * @param description Description of the event.
+     * @param from Start date/time of the event.
+     * @param to End date/time of the event.
      */
     public EventCommand(String description, String from, String to) {
         this.description = description;
