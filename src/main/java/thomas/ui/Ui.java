@@ -1,8 +1,9 @@
 package thomas.ui;
 
 import java.time.LocalDate;
-import java.util.Scanner;
 import java.util.ArrayList;
+import java.util.Scanner;
+
 import thomas.task.Task;
 import thomas.task.TaskList;
 

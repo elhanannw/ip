@@ -25,8 +25,8 @@ class EventTest {
 
     @Test
     void constructor_endBeforeStart_throwsException() {
-        assertThrows(ThomasException.class,
-                () -> new Event("meeting", "2026-08-27", "2026-08-26"));
+        assertThrows(ThomasException.class, () ->
+                new Event("meeting", "2026-08-27", "2026-08-26"));
     }
 
     @Test

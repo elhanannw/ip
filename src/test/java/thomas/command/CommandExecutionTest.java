@@ -93,7 +93,7 @@ class CommandExecutionTest {
     }
 
     @Test
-    void findCommand_execute_withKeyword_doesNotMutateTaskList() throws Exception {
+    void findCommand_execute_withKeywordDoesNotMutate() throws Exception {
         TaskList tasks = new TaskList();
         tasks.add(new Todo("read book"));
         tasks.add(new Deadline("return book", "2026-06-06"));
@@ -106,7 +106,7 @@ class CommandExecutionTest {
     }
 
     @Test
-    void findCommand_execute_emptyKeyword_throwsException() {
+    void findCommand_execute_emptyKeywordThrows() {
         assertThrows(ThomasException.class, () ->
                 new FindCommand("").execute(new TaskList(), new Ui(), storage()));
     }

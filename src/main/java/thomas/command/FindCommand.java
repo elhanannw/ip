@@ -1,6 +1,7 @@
 package thomas.command;
 
 import java.util.ArrayList;
+
 import thomas.ThomasException;
 import thomas.storage.Storage;
 import thomas.task.Task;

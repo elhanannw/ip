@@ -71,8 +71,11 @@ class ParserTest {
 
     @Test
     void getEventDetails_missingOrReversedParts_throwsThomasException() {
-        assertThrows(ThomasException.class, () -> parser.getEventDetails("event meeting /from 2026-08-26"));
-        assertThrows(ThomasException.class, () -> parser.getEventDetails("event meeting /from /to 2026-08-26"));
-        assertThrows(ThomasException.class, () -> parser.getEventDetails("event meeting /to 2026-08-26 /from 2026-08-27"));
+        String shortEventCmd = "event meeting /from 2026-08-26";
+        assertThrows(ThomasException.class, () -> parser.getEventDetails(shortEventCmd));
+        String eventMissingTo = "event meeting /from /to 2026-08-26";
+        assertThrows(ThomasException.class, () -> parser.getEventDetails(eventMissingTo));
+        String eventWrongOrder = "event meeting /to 2026-08-26 /from 2026-08-27";
+        assertThrows(ThomasException.class, () -> parser.getEventDetails(eventWrongOrder));
     }
 }
