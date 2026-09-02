@@ -1,5 +1,7 @@
 package thomas;
 
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
 import java.util.Scanner;
 
 import thomas.command.Command;
@@ -18,6 +20,7 @@ public class Thomas {
     private final TaskList tasks;
     private final Ui ui;
     private final Parser parser;
+    private boolean isLastCommandExit = false;
 
     /**
      * Creates Thomas and loads the saved tasks.
@@ -64,6 +67,55 @@ public class Thomas {
                 }
             }
         }
+    }
+
+    /**
+     * Processes a command and returns the response as a string.
+     * Used by the GUI to get responses without printing to System.out.
+     *
+     * @param userInput The command input from the user.
+     * @return The response string.
+     */
+    public String getResponse(String userInput) {
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        PrintStream originalOut = System.out;
+        System.setOut(new PrintStream(outputStream));
+        isLastCommandExit = false;
+
+        try {
+            Command command = parser.parse(userInput);
+            command.execute(tasks, ui, storage);
+            isLastCommandExit = command.isExit();
+        } catch (ThomasException e) {
+            System.out.println("Error: " + e.getMessage());
+        } catch (NumberFormatException e) {
+            System.out.println("Please enter a valid task number.");
+        } catch (Exception e) {
+            System.out.println("An unexpected error occurred: " + e.getMessage());
+        } finally {
+            System.setOut(originalOut);
+        }
+
+        String response = outputStream.toString();
+        return response.isEmpty() ? "Command executed." : response;
+    }
+
+    /**
+     * Returns whether the last command executed was an exit command.
+     *
+     * @return {@code true} if the last command was an exit command.
+     */
+    public boolean isLastCommandExit() {
+        return isLastCommandExit;
+    }
+
+    /**
+     * Returns the task list for GUI display.
+     *
+     * @return The current task list.
+     */
+    public TaskList getTasks() {
+        return tasks;
     }
 
     /**
