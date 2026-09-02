@@ -20,6 +20,7 @@ public class Thomas {
     private final TaskList tasks;
     private final Ui ui;
     private final Parser parser;
+    private boolean isLastCommandExit = false;
 
     /**
      * Creates Thomas and loads the saved tasks.
@@ -79,10 +80,12 @@ public class Thomas {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         PrintStream originalOut = System.out;
         System.setOut(new PrintStream(outputStream));
+        isLastCommandExit = false;
 
         try {
             Command command = parser.parse(userInput);
             command.execute(tasks, ui, storage);
+            isLastCommandExit = command.isExit();
         } catch (ThomasException e) {
             System.out.println("Error: " + e.getMessage());
         } catch (NumberFormatException e) {
@@ -95,6 +98,15 @@ public class Thomas {
 
         String response = outputStream.toString();
         return response.isEmpty() ? "Command executed." : response;
+    }
+
+    /**
+     * Returns whether the last command executed was an exit command.
+     *
+     * @return {@code true} if the last command was an exit command.
+     */
+    public boolean isLastCommandExit() {
+        return isLastCommandExit;
     }
 
     /**

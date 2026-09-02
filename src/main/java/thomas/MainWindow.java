@@ -1,5 +1,6 @@
 package thomas;
 
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ScrollPane;
@@ -49,13 +50,10 @@ public class MainWindow extends AnchorPane {
      * Displays the welcome message and existing tasks.
      */
     private void displayWelcome() {
-        String greeting = """
-                ╔═══════════════════════════════╗
-                ║  Welcome to Thomas!           ║
-                ║  Your task manager chatbot    ║
-                ╚═══════════════════════════════╝
-
-                What can I do for you today?""";
+        String greeting = "Welcome to Thomas!\n"
+                + "Your task manager chatbot\n"
+                + "\n"
+                + "What can I do for you today?";
 
         dialogContainer.getChildren().add(
                 DialogBox.getThomasDialog(greeting, thomasImage)
@@ -100,5 +98,10 @@ public class MainWindow extends AnchorPane {
                 DialogBox.getThomasDialog(response, thomasImage)
         );
         userInput.clear();
+
+        // Close the GUI window if the exit command was executed
+        if (thomas.isLastCommandExit()) {
+            Platform.exit();
+        }
     }
 }
