@@ -4,6 +4,8 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Scanner;
 
+import thomas.place.Place;
+import thomas.place.PlaceList;
 import thomas.task.Task;
 import thomas.task.TaskList;
 
@@ -162,5 +164,69 @@ public class Ui {
      */
     public void showInvalidTaskNumber() {
         System.out.println("oooooooof Please enter a valid task number.");
+    }
+
+    /** Displays every saved place. */
+    public void showPlaces(PlaceList places) {
+        if (places.size() == 0) {
+            System.out.println("You have no saved places.");
+            return;
+        }
+        System.out.println("Here are your saved places:");
+        for (int i = 0; i < places.size(); i++) {
+            showPlace(places.get(i), i + 1);
+        }
+    }
+
+    /** Displays places whose names match a keyword. */
+    public void showMatchingPlaces(PlaceList places, String keyword) {
+        ArrayList<Place> matches = places.findByName(keyword);
+        if (matches.isEmpty()) {
+            System.out.println("No saved places match \"" + keyword + "\".");
+            return;
+        }
+        System.out.println("Here are the matching saved places:");
+        for (Place place : matches) {
+            showPlace(place, places.getOneBasedIndex(place));
+        }
+    }
+
+    /** Displays the confirmation for a newly added place. */
+    public void showPlaceAdded(Place place, int totalPlaces) {
+        System.out.println("Added this place:");
+        showPlace(place, totalPlaces);
+        System.out.println("You have " + totalPlaces + " " + (totalPlaces == 1 ? "place" : "places")
+                + " in your saved places.");
+    }
+
+    /** Displays the updated place. */
+    public void showPlaceUpdated(Place place, int index) {
+        System.out.println("Updated this place:");
+        showPlace(place, index);
+    }
+
+    /** Requests confirmation before a place is deleted. */
+    public void showPlaceDeletionRequest(Place place, int index) {
+        System.out.println("Delete this place? Enter `confirmdeleteplace " + index + "` to confirm:");
+        showPlace(place, index);
+    }
+
+    /** Displays the confirmation for a deleted place. */
+    public void showPlaceDeleted(Place place, int index, int remainingPlaces) {
+        System.out.println("Deleted this place:");
+        System.out.println("  " + index + ". " + place.getName());
+        System.out.println("You have " + remainingPlaces + " saved "
+                + (remainingPlaces == 1 ? "place." : "places."));
+    }
+
+    private void showPlace(Place place, int index) {
+        System.out.println("  " + index + ". " + place.getName());
+        System.out.println("     Type: " + place.getType());
+        System.out.println("     Address: " + place.getAddress());
+        System.out.println("     Rating: " + place.getRating() + "/5");
+        System.out.println("     Price: " + place.getPrice());
+        System.out.println("     Date visited: " + (place.getVisitedDate() == null
+                ? "Not recorded" : place.getVisitedDate()));
+        System.out.println("     Note: " + (place.getNote() == null ? "Not recorded" : place.getNote()));
     }
 }
