@@ -15,30 +15,32 @@ public class Parser {
      */
     public Command parse(String fullCommand) throws ThomasException {
         String command = getCommand(fullCommand);
-        if (command.equals("list")) {
-            return new ListCommand();
-        } else if (command.equals("mark")) {
-            return new MarkCommand(getArgument(fullCommand, "mark"), this);
-        } else if (command.equals("unmark")) {
-            return new UnmarkCommand(getArgument(fullCommand, "unmark"), this);
-        } else if (command.equals("delete")) {
-            return new DeleteCommand(getArgument(fullCommand, "delete"), this);
-        } else if (command.equals("todo")) {
-            return new TodoCommand(getArgument(fullCommand, "todo"));
-        } else if (command.equals("deadline")) {
-            String[] details = getDeadlineDetails(fullCommand);
-            return new DeadlineCommand(details[0], details[1]);
-        } else if (command.equals("event")) {
-            String[] details = getEventDetails(fullCommand);
-            return new EventCommand(details[0], details[1], details[2]);
-        } else if (command.equals("on")) {
-            return new OnCommand(getArgument(fullCommand, "on"));
-        } else if (command.equals("find")) {
-            return new FindCommand(getArgument(fullCommand, "find"));
-        } else if (command.equals("bye")) {
-            return new ExitCommand();
+        switch (command) {
+            case "list":
+                return new ListCommand();
+            case "mark":
+                return new MarkCommand(getArgument(fullCommand, "mark"), this);
+            case "unmark":
+                return new UnmarkCommand(getArgument(fullCommand, "unmark"), this);
+            case "delete":
+                return new DeleteCommand(getArgument(fullCommand, "delete"), this);
+            case "todo":
+                return new TodoCommand(getArgument(fullCommand, "todo"));
+            case "deadline":
+                String[] deadlineDetails = getDeadlineDetails(fullCommand);
+                return new DeadlineCommand(deadlineDetails[0], deadlineDetails[1]);
+            case "event":
+                String[] eventDetails = getEventDetails(fullCommand);
+                return new EventCommand(eventDetails[0], eventDetails[1], eventDetails[2]);
+            case "on":
+                return new OnCommand(getArgument(fullCommand, "on"));
+            case "find":
+                return new FindCommand(getArgument(fullCommand, "find"));
+            case "bye":
+                return new ExitCommand();
+            default:
+                return new UnknownCommand();
         }
-        return new UnknownCommand();
     }
 
     /**
@@ -95,7 +97,7 @@ public class Parser {
     public String[] getDeadlineDetails(String command) throws ThomasException {
         int byIndex = command.indexOf("/by");
         if (byIndex == -1) {
-            throw new ThomasException("Deadline requires '/by <date>'. Eg: deadline Assignment 1 /by Tuesday");
+            throw new ThomasException("Deadline requires '/by <date>'. E.g., deadline Assignment 1 /by Tuesday");
         }
         String description = command.substring(8, byIndex).trim();
         String by = command.substring(byIndex + 3).trim();
@@ -119,7 +121,7 @@ public class Parser {
         int fromIndex = command.indexOf("/from");
         int toIndex = command.indexOf("/to");
         if (fromIndex == -1 || toIndex == -1 || toIndex < fromIndex) {
-            throw new ThomasException("Event requires '/from' and '/to'. Eg: event meeting /from Mon /to Thurs");
+            throw new ThomasException("Event requires '/from' and '/to'. E.g., event meeting /from Mon /to Thurs");
         }
         String description = command.substring(5, fromIndex).trim();
         String from = command.substring(fromIndex + 5, toIndex).trim();

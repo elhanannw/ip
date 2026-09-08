@@ -34,7 +34,7 @@ public class DeleteCommand extends Command {
      */
     @Override
     public void execute(TaskList tasks, Ui ui, Storage storage) throws ThomasException {
-        int taskIndex = parser.getTaskIndex(argument, tasks.size(), "Pls specify task number to delete.");
+        int taskIndex = parser.getTaskIndex(argument, tasks.size(), "Please specify a task number to delete.");
         Task removedTask = tasks.delete(taskIndex);
         storage.save(tasks);
         ui.showTaskDeleted(removedTask, tasks.size());

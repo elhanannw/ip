@@ -21,7 +21,7 @@ public class FindCommand extends Command {
     @Override
     public void execute(TaskList tasks, Ui ui, Storage storage) throws ThomasException {
         if (keyword.isEmpty()) {
-            throw new ThomasException("broo, cannot find leh, provide a keyword eg: find book");
+            throw new ThomasException("Please provide a keyword. E.g., find book");
         }
         ArrayList<Task> matchingTasks = tasks.findByKeyword(keyword);
         ui.showMatchingTasks(matchingTasks);

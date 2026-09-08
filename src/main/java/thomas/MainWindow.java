@@ -39,10 +39,10 @@ public class MainWindow extends AnchorPane {
     /**
      * Injects the Thomas instance.
      *
-     * @param t The Thomas instance to use for command processing.
+     * @param thomas The Thomas instance to use for command processing.
      */
-    public void setThomas(Thomas t) {
-        thomas = t;
+    public void setThomas(Thomas thomas) {
+        this.thomas = thomas;
         displayWelcome();
     }
 
@@ -59,7 +59,6 @@ public class MainWindow extends AnchorPane {
                 DialogBox.getThomasDialog(greeting, thomasImage)
         );
 
-        // Display existing tasks
         TaskList tasks = thomas.getTasks();
         if (tasks.size() > 0) {
             StringBuilder taskList = new StringBuilder("Here are your existing tasks:\n");
@@ -99,7 +98,6 @@ public class MainWindow extends AnchorPane {
         );
         userInput.clear();
 
-        // Close the GUI window if the exit command was executed
         if (thomas.isLastCommandExit()) {
             Platform.exit();
         }
