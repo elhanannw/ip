@@ -46,6 +46,14 @@ class ParserTest {
         assertInstanceOf(MarkCommand.class, parser.parse("mark 1"));
         assertInstanceOf(UnmarkCommand.class, parser.parse("unmark 1"));
         assertInstanceOf(DeleteCommand.class, parser.parse("delete 1"));
+        assertInstanceOf(AddPlaceCommand.class, parser.parse(
+                "place Sushi /type restaurant /at Town /rating 4 /price 12"));
+        assertInstanceOf(ListPlaceCommand.class, parser.parse("listplace"));
+        assertInstanceOf(FindPlaceCommand.class, parser.parse("findplace sushi"));
+        assertInstanceOf(EditPlaceCommand.class, parser.parse("editplace 1 /rating 5"));
+        assertInstanceOf(DeletePlaceCommand.class, parser.parse("deleteplace 1"));
+        assertInstanceOf(ConfirmDeletePlaceCommand.class, parser.parse("confirmdeleteplace 1"));
+        assertInstanceOf(HelpCommand.class, parser.parse("/help"));
         assertInstanceOf(ExitCommand.class, parser.parse("bye"));
         assertInstanceOf(UnknownCommand.class, parser.parse("unknown"));
     }
@@ -77,5 +85,13 @@ class ParserTest {
         assertThrows(ThomasException.class, () -> parser.getEventDetails(eventMissingTo));
         String eventWrongOrder = "event meeting /to 2026-08-26 /from 2026-08-27";
         assertThrows(ThomasException.class, () -> parser.getEventDetails(eventWrongOrder));
+    }
+
+    @Test
+    void parse_placeCommandWithDuplicateOrUnknownFields_throwsThomasException() {
+        assertThrows(ThomasException.class, () -> parser.parse(
+                "place Sushi /type restaurant /type cafe /at Town /rating 4 /price 12"));
+        assertThrows(ThomasException.class, () -> parser.parse(
+                "place Sushi /type restaurant /at Town /rating 4 /price 12 /tag ramen"));
     }
 }

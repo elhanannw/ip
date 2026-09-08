@@ -2,10 +2,17 @@ package thomas;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Scanner;
 
 import thomas.command.Command;
+import thomas.command.ConfirmDeletePlaceCommand;
+import thomas.command.DeletePlaceCommand;
 import thomas.command.Parser;
+import thomas.command.PlaceCommand;
+import thomas.place.PlaceList;
+import thomas.storage.PlaceStorage;
 import thomas.storage.Storage;
 import thomas.task.TaskList;
 import thomas.ui.Ui;
@@ -17,10 +24,13 @@ import thomas.ui.Ui;
  */
 public class Thomas {
     private final Storage storage;
+    private final PlaceStorage placeStorage;
     private final TaskList tasks;
+    private final PlaceList places;
     private final Ui ui;
     private final Parser parser;
     private boolean isLastCommandExit = false;
+    private Integer pendingPlaceDeletionIndex;
 
     /**
      * Creates Thomas and loads the saved tasks.
@@ -39,6 +49,8 @@ public class Thomas {
         this.parser = new Parser();
         this.storage = new Storage(filePath);
         this.tasks = new TaskList(storage.load());
+        this.placeStorage = new PlaceStorage(getPlaceFilePath(filePath));
+        this.places = new PlaceList(placeStorage.load());
     }
 
     /**
@@ -56,11 +68,13 @@ public class Thomas {
                     }
                     ui.showDivider();
                     Command command = parser.parse(fullCommand);
-                    command.execute(tasks, ui, storage);
+                    executeCommand(command);
                     isExit = command.isExit();
                 } catch (ThomasException e) {
+                    pendingPlaceDeletionIndex = null;
                     ui.showError(e.getMessage());
                 } catch (NumberFormatException e) {
+                    pendingPlaceDeletionIndex = null;
                     ui.showInvalidTaskNumber();
                 } finally {
                     ui.showDivider();
@@ -84,13 +98,16 @@ public class Thomas {
 
         try {
             Command command = parser.parse(userInput);
-            command.execute(tasks, ui, storage);
+            executeCommand(command);
             isLastCommandExit = command.isExit();
         } catch (ThomasException e) {
+            pendingPlaceDeletionIndex = null;
             System.out.println("Error: " + e.getMessage());
         } catch (NumberFormatException e) {
+            pendingPlaceDeletionIndex = null;
             System.out.println("Please enter a valid task number.");
         } catch (Exception e) {
+            pendingPlaceDeletionIndex = null;
             System.out.println("An unexpected error occurred: " + e.getMessage());
         } finally {
             System.setOut(originalOut);
@@ -116,6 +133,39 @@ public class Thomas {
      */
     public TaskList getTasks() {
         return tasks;
+    }
+
+    /** Returns the saved places for GUI display and tests. */
+    public PlaceList getPlaces() {
+        return places;
+    }
+
+    private void executeCommand(Command command) throws ThomasException {
+        if (command instanceof ConfirmDeletePlaceCommand confirmation) {
+            if (pendingPlaceDeletionIndex == null || pendingPlaceDeletionIndex != confirmation.getIndex()) {
+                pendingPlaceDeletionIndex = null;
+                throw new ThomasException("No matching place deletion is awaiting confirmation.");
+            }
+            pendingPlaceDeletionIndex = null;
+            confirmation.execute(places, ui, placeStorage);
+        } else if (command instanceof DeletePlaceCommand deletion) {
+            pendingPlaceDeletionIndex = null;
+            deletion.execute(places, ui, placeStorage);
+            pendingPlaceDeletionIndex = deletion.getIndex();
+        } else {
+            pendingPlaceDeletionIndex = null;
+            if (command instanceof PlaceCommand placeCommand) {
+                placeCommand.execute(places, ui, placeStorage);
+            } else {
+                command.execute(tasks, ui, storage);
+            }
+        }
+    }
+
+    private String getPlaceFilePath(String... filePath) {
+        Path taskFile = Paths.get("", filePath);
+        Path parent = taskFile.getParent();
+        return (parent == null ? Paths.get("places.txt") : parent.resolve("places.txt")).toString();
     }
 
     /**
