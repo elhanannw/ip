@@ -25,6 +25,7 @@ public class Deadline extends Task {
         DateTimeUtil.ParsedDateTime parsed = DateTimeUtil.parseDateTime(by);
         this.byDate = parsed.getDate();
         this.byTime = parsed.getTime();
+        assert byDate != null : "A parsed deadline must have a date";
     }
 
     public LocalDate getByDate() {

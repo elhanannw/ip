@@ -60,6 +60,7 @@ public class Parser {
      * @return Trimmed argument text.
      */
     public String getArgument(String command, String prefix) {
+        assert command.startsWith(prefix) : "Command must start with its expected prefix";
         return command.substring(prefix.length()).trim();
     }
 
@@ -73,6 +74,7 @@ public class Parser {
      * @throws ThomasException If the argument is empty or outside the list.
      */
     public int getTaskIndex(String argument, int taskCount, String emptyMessage) throws ThomasException {
+        assert taskCount >= 0 : "Task count must not be negative";
         if (argument.isEmpty()) {
             throw new ThomasException(emptyMessage);
         }

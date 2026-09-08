@@ -33,6 +33,8 @@ public class Event extends Task {
         this.toDate = parsedTo.getDate();
         this.toTime = parsedTo.getTime();
 
+        assert fromDate != null : "A parsed event must have a start date";
+        assert toDate != null : "A parsed event must have an end date";
         if (toDate.isBefore(fromDate)) {
             throw new ThomasException(" Brooo how can event end date be before start date?");
         }
