@@ -23,6 +23,7 @@ public class TaskList {
      * @param tasks Tasks to store.
      */
     public TaskList(ArrayList<Task> tasks) {
+        assert tasks != null : "Task collection must not be null";
         this.tasks = tasks;
     }
 
@@ -32,6 +33,7 @@ public class TaskList {
      * @param task Task to add.
      */
     public void add(Task task) {
+        assert task != null : "Task to add must not be null";
         tasks.add(task);
     }
 
@@ -42,6 +44,7 @@ public class TaskList {
      * @return the task at that position
      */
     public Task get(int index) {
+        assert index >= 0 && index < tasks.size() : "Task index must be within the list";
         return tasks.get(index);
     }
 
@@ -52,6 +55,7 @@ public class TaskList {
      * @return Removed task.
      */
     public Task delete(int index) {
+        assert index >= 0 && index < tasks.size() : "Task index must be within the list";
         return tasks.remove(index);
     }
 

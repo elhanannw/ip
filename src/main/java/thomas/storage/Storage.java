@@ -146,6 +146,7 @@ public class Storage {
         } else {
             throw new ThomasException("Broo, unknown task type" + type);
         }
+        assert task != null : "A recognized task type must produce a task";
         if (isDone) {
             task.markAsDone();
         }
