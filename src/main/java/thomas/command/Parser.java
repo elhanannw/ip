@@ -58,6 +58,9 @@ public class Parser {
             case "confirmdeleteplace":
                 return new ConfirmDeletePlaceCommand(parsePlaceIndex(getArgument(fullCommand, "confirmdeleteplace"),
                         "Please specify a place number to confirm."));
+            case "/help":
+                requireNoArgument(fullCommand, "/help");
+                return new HelpCommand();
             case "bye":
                 return new ExitCommand();
             default:

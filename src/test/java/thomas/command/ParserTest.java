@@ -53,6 +53,7 @@ class ParserTest {
         assertInstanceOf(EditPlaceCommand.class, parser.parse("editplace 1 /rating 5"));
         assertInstanceOf(DeletePlaceCommand.class, parser.parse("deleteplace 1"));
         assertInstanceOf(ConfirmDeletePlaceCommand.class, parser.parse("confirmdeleteplace 1"));
+        assertInstanceOf(HelpCommand.class, parser.parse("/help"));
         assertInstanceOf(ExitCommand.class, parser.parse("bye"));
         assertInstanceOf(UnknownCommand.class, parser.parse("unknown"));
     }

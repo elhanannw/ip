@@ -166,6 +166,32 @@ public class Ui {
         System.out.println("oooooooof Please enter a valid task number.");
     }
 
+    /** Displays all commands available to the user. */
+    public void showHelp() {
+        System.out.println("Available commands:");
+        System.out.println("Tasks:");
+        System.out.println("  todo DESCRIPTION");
+        System.out.println("  deadline DESCRIPTION /by DATE");
+        System.out.println("  event DESCRIPTION /from DATE /to DATE");
+        System.out.println("  list");
+        System.out.println("  find KEYWORD");
+        System.out.println("  on DATE");
+        System.out.println("  mark INDEX");
+        System.out.println("  unmark INDEX");
+        System.out.println("  delete INDEX");
+        System.out.println("Places:");
+        System.out.println("  place NAME /type TYPE /at ADDRESS /rating 1-5 /price AMOUNT"
+                + " [/visited YYYY-MM-DD] [/note NOTE]");
+        System.out.println("  listplace");
+        System.out.println("  findplace KEYWORD");
+        System.out.println("  editplace INDEX /FIELD VALUE");
+        System.out.println("  deleteplace INDEX");
+        System.out.println("  confirmdeleteplace INDEX");
+        System.out.println("Other:");
+        System.out.println("  /help");
+        System.out.println("  bye");
+    }
+
     /** Displays every saved place. */
     public void showPlaces(PlaceList places) {
         if (places.size() == 0) {

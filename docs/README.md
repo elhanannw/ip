@@ -2,6 +2,10 @@
 
 Thomas manages tasks and a separate collection of saved places. Task commands and place commands have separate numbering: a place never appears in `list`, `find`, `mark`, `unmark`, or task `delete`.
 
+## View available commands: `/help`
+
+Enter `/help` in the GUI or terminal to display task and place command syntax.
+
 ## Saved places
 
 ### Add a place: `place`

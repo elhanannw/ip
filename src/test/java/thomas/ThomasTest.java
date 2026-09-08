@@ -61,4 +61,16 @@ class ThomasTest {
         assertTrue(confirmation.contains("No matching place deletion"));
         assertEquals(1, thomas.getPlaces().size());
     }
+
+    @Test
+    void getResponse_helpCommand_listsTaskAndPlaceCommands() {
+        Thomas thomas = new Thomas(temporaryDirectory.toString(), "tasks.txt");
+
+        String response = thomas.getResponse("/help");
+
+        assertTrue(response.contains("Tasks:"));
+        assertTrue(response.contains("Places:"));
+        assertTrue(response.contains("place NAME /type TYPE /at ADDRESS /rating 1-5 /price AMOUNT"));
+        assertTrue(response.contains("[/visited YYYY-MM-DD] [/note NOTE]"));
+    }
 }

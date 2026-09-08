@@ -2,6 +2,7 @@
 
 ## Automated tests
 
+- Verify `/help` lists task and place commands.
 - Add valid places with and without optional visit dates and notes.
 - Verify ratings, prices, invalid dates, empty values, duplicate flags, unknown flags, pipes, and line breaks are rejected without saving a record.
 - Verify case-insensitive name-substring searches retain permanent list indices.
