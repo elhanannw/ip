@@ -1,6 +1,7 @@
 package thomas.task;
 
 import java.util.ArrayList;
+import java.util.stream.Collectors;
 
 import thomas.ThomasException;
 
@@ -114,12 +115,8 @@ public class TaskList {
      */
     public ArrayList<Task> findByKeyword(String keyword) {
         String normalizedKeyword = keyword.toLowerCase();
-        ArrayList<Task> matchingTasks = new ArrayList<>();
-        for (Task task : tasks) {
-            if (task.getDescription().toLowerCase().contains(normalizedKeyword)) {
-                matchingTasks.add(task);
-            }
-        }
-        return matchingTasks;
+        return tasks.stream()
+                .filter(task -> task.getDescription().toLowerCase().contains(normalizedKeyword))
+                .collect(Collectors.toCollection(ArrayList::new));
     }
 }
