@@ -34,7 +34,7 @@ public class OnCommand extends Command {
     @Override
     public void execute(TaskList tasks, Ui ui, Storage storage) throws ThomasException {
         if (dateInput.isEmpty()) {
-            throw new ThomasException("Please provide a date. Eg: on 2026-08-09");
+            throw new ThomasException("Please provide a date. E.g., on 2026-08-09");
         }
         LocalDate targetDate = DateTimeUtil.parseDate(dateInput);
         ui.showTasksOn(tasks, targetDate);

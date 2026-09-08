@@ -39,7 +39,6 @@ public class Storage {
         ArrayList<Task> tasks = new ArrayList<>();
         File file = filePath.toFile();
 
-        // If directory or file doesn't exist
         if (!file.exists()) {
             try {
                 if (file.getParentFile() != null && !file.getParentFile().exists()) {
@@ -82,75 +81,72 @@ public class Storage {
      * @throws ThomasException If the line is invalid or corrupt.
      */
     private Task parseLineToTask(String line) throws ThomasException {
-        int first = line.indexOf('|');
-        if (first == -1) {
-            throw new ThomasException("Invalid format: missing first");
+        int firstSeparatorIndex = line.indexOf('|');
+        if (firstSeparatorIndex == -1) {
+            throw new ThomasException("Invalid format: missing task status");
         }
 
-        int second = line.indexOf('|', first + 1);
-        if (second == -1) {
-            throw new ThomasException("Invalid format: missing second");
+        int secondSeparatorIndex = line.indexOf('|', firstSeparatorIndex + 1);
+        if (secondSeparatorIndex == -1) {
+            throw new ThomasException("Invalid format: missing task description");
         }
 
-        // Extract base task elements
-        String type = line.substring(0, first).trim();
-        boolean isDone = line.substring(first + 1, second).trim().equals("Y");
+        String taskType = line.substring(0, firstSeparatorIndex).trim();
+        boolean isDone = line.substring(firstSeparatorIndex + 1, secondSeparatorIndex).trim().equals("Y");
+        Task task = switch (taskType) {
+            case "T" -> parseTodo(line, secondSeparatorIndex);
+            case "D" -> parseDeadline(line, secondSeparatorIndex);
+            case "E" -> parseEvent(line, secondSeparatorIndex);
+            default -> throw new ThomasException("Unknown task type: " + taskType);
+        };
 
-        Task task;
-
-        if (type.equals("T")) {
-            String description = line.substring(second + 1).trim();
-            if (description.isEmpty()) {
-                throw new ThomasException("Todo description empty!");
-            }
-            task = new Todo(description);
-
-        } else if (type.equals("D")) {
-            int third = line.indexOf('|', second + 1);
-            if (third == -1) {
-                throw new ThomasException("Missing deadline date/time");
-            }
-
-            String description = line.substring(second + 1, third).trim();
-            String by = line.substring(third + 1).trim();
-
-            if (description.isEmpty() || by.isEmpty()) {
-                throw new ThomasException("Deadline description or date/time empty!");
-            }
-
-            task = new Deadline(description, by);
-
-        } else if (type.equals("E")) {
-            int third = line.indexOf('|', second + 1);
-            if (third == -1) {
-                throw new ThomasException("Missing event start time");
-            }
-
-            int fourth = line.indexOf('|', third + 1);
-            String description = line.substring(second + 1, third).trim();
-            String from;
-            String to;
-
-            if (fourth == -1) {
-                from = line.substring(third + 1).trim();
-                to = "";
-            } else {
-                from = line.substring(third + 1, fourth).trim();
-                to = line.substring(fourth + 1).trim();
-            }
-
-            if (description.isEmpty() || from.isEmpty()) {
-                throw new ThomasException("Event description or time empty!");
-            }
-            task = new Event(description, from, to);
-        } else {
-            throw new ThomasException("Broo, unknown task type" + type);
-        }
         assert task != null : "A recognized task type must produce a task";
         if (isDone) {
             task.markAsDone();
         }
         return task;
+    }
+
+    private Task parseTodo(String line, int descriptionSeparatorIndex) throws ThomasException {
+        String description = line.substring(descriptionSeparatorIndex + 1).trim();
+        if (description.isEmpty()) {
+            throw new ThomasException("Todo description cannot be empty.");
+        }
+        return new Todo(description);
+    }
+
+    private Task parseDeadline(String line, int descriptionSeparatorIndex) throws ThomasException {
+        int dateSeparatorIndex = line.indexOf('|', descriptionSeparatorIndex + 1);
+        if (dateSeparatorIndex == -1) {
+            throw new ThomasException("Deadline date/time is missing.");
+        }
+
+        String description = line.substring(descriptionSeparatorIndex + 1, dateSeparatorIndex).trim();
+        String dueDateTime = line.substring(dateSeparatorIndex + 1).trim();
+        if (description.isEmpty() || dueDateTime.isEmpty()) {
+            throw new ThomasException("Deadline description or date/time cannot be empty.");
+        }
+        return new Deadline(description, dueDateTime);
+    }
+
+    private Task parseEvent(String line, int descriptionSeparatorIndex) throws ThomasException {
+        int startSeparatorIndex = line.indexOf('|', descriptionSeparatorIndex + 1);
+        if (startSeparatorIndex == -1) {
+            throw new ThomasException("Event start date/time is missing.");
+        }
+
+        int endSeparatorIndex = line.indexOf('|', startSeparatorIndex + 1);
+        if (endSeparatorIndex == -1) {
+            throw new ThomasException("Event end date/time is missing.");
+        }
+
+        String description = line.substring(descriptionSeparatorIndex + 1, startSeparatorIndex).trim();
+        String startDateTime = line.substring(startSeparatorIndex + 1, endSeparatorIndex).trim();
+        String endDateTime = line.substring(endSeparatorIndex + 1).trim();
+        if (description.isEmpty() || startDateTime.isEmpty() || endDateTime.isEmpty()) {
+            throw new ThomasException("Event description and date/times cannot be empty.");
+        }
+        return new Event(description, startDateTime, endDateTime);
     }
 
     /**
@@ -159,19 +155,7 @@ public class Storage {
      * @param tasks Tasks to save.
      */
     public void save(ArrayList<Task> tasks) {
-        File file = filePath.toFile();
-        try {
-            if (file.getParentFile() != null && !file.getParentFile().exists()) {
-                file.getParentFile().mkdirs();
-            }
-            try (FileWriter fw = new FileWriter(file)) {
-                for (Task task : tasks) {
-                    fw.write(task.toFileFormat() + System.lineSeparator());
-                }
-            }
-        } catch (Exception e) {
-            System.out.println(" !!! cannot save to disk: " + e.getMessage());
-        }
+        saveTasks(tasks);
     }
 
     /**
@@ -180,18 +164,22 @@ public class Storage {
      * @param taskList Task list to save.
      */
     public void save(TaskList taskList) {
+        saveTasks(taskList.getTasks());
+    }
+
+    private void saveTasks(ArrayList<Task> tasks) {
         File file = filePath.toFile();
         try {
             if (file.getParentFile() != null && !file.getParentFile().exists()) {
                 file.getParentFile().mkdirs();
             }
-            try (FileWriter fw = new FileWriter(file)) {
-                for (int i = 0; i < taskList.size(); i += 1) {
-                    fw.write(taskList.get(i).toFileFormat() + System.lineSeparator());
+            try (FileWriter fileWriter = new FileWriter(file)) {
+                for (Task task : tasks) {
+                    fileWriter.write(task.toFileFormat() + System.lineSeparator());
                 }
             }
         } catch (Exception e) {
-            System.out.println(" !!! cannot save to disk: " + e.getMessage());
+            System.out.println(" !!! Cannot save to disk: " + e.getMessage());
         }
     }
 }

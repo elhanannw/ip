@@ -24,7 +24,7 @@ public class DialogBox extends HBox {
     @FXML
     private ImageView displayPicture;
 
-    private DialogBox(String text, Image img) {
+    private DialogBox(String text, Image image) {
         try {
             FXMLLoader fxmlLoader = new FXMLLoader(
                     MainWindow.class.getResource("/view/DialogBox.fxml"));
@@ -36,7 +36,7 @@ public class DialogBox extends HBox {
         }
 
         dialog.setText(text);
-        displayPicture.setImage(img);
+        displayPicture.setImage(image);
     }
 
     /**
@@ -44,10 +44,10 @@ public class DialogBox extends HBox {
      * and text on the right.
      */
     private void flip() {
-        ObservableList<Node> tmp = FXCollections.observableArrayList(
+        ObservableList<Node> dialogElements = FXCollections.observableArrayList(
                 this.getChildren());
-        Collections.reverse(tmp);
-        getChildren().setAll(tmp);
+        Collections.reverse(dialogElements);
+        getChildren().setAll(dialogElements);
         setAlignment(Pos.TOP_LEFT);
     }
 
@@ -55,23 +55,23 @@ public class DialogBox extends HBox {
      * Creates a user dialog box.
      *
      * @param text The user's message.
-     * @param img The user's avatar image.
+     * @param image The user's avatar image.
      * @return A dialog box for the user.
      */
-    public static DialogBox getUserDialog(String text, Image img) {
-        return new DialogBox(text, img);
+    public static DialogBox getUserDialog(String text, Image image) {
+        return new DialogBox(text, image);
     }
 
     /**
      * Creates a Thomas dialog box.
      *
      * @param text Thomas's response message.
-     * @param img Thomas's avatar image.
+     * @param image Thomas's avatar image.
      * @return A dialog box for Thomas.
      */
-    public static DialogBox getThomasDialog(String text, Image img) {
-        var db = new DialogBox(text, img);
-        db.flip();
-        return db;
+    public static DialogBox getThomasDialog(String text, Image image) {
+        DialogBox dialogBox = new DialogBox(text, image);
+        dialogBox.flip();
+        return dialogBox;
     }
 }
