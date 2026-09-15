@@ -36,6 +36,9 @@ public class TodoCommand extends Command {
             throw new ThomasException("Todo description cannot be empty.");
         }
         Task task = new Todo(description);
+        if (tasks.containsEquivalent(task)) {
+            throw new ThomasException("This task already exists.");
+        }
         tasks.add(task);
         storage.save(tasks);
         ui.showTaskAdded(task, tasks.size());

@@ -30,6 +30,16 @@ class EventTest {
     }
 
     @Test
+    void constructor_sameOrEarlierEndTime_throwsException() {
+        assertThrows(ThomasException.class, () ->
+                new Event("meeting", "2026-08-26 1000", "2026-08-26 1000"));
+        assertThrows(ThomasException.class, () ->
+                new Event("meeting", "2026-08-26 1100", "2026-08-26 1000"));
+        assertThrows(ThomasException.class, () ->
+                new Event("meeting", "2026-08-26", "2026-08-26"));
+    }
+
+    @Test
     void occursOn_dateWithinInclusiveRange_returnsTrue() throws ThomasException {
         Event event = new Event("conference", "2026-08-26", "2026-08-28");
 

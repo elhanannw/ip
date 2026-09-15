@@ -64,4 +64,15 @@ class TaskListTest {
 
         assertThrows(ThomasException.class, () -> tasks.unmark(0));
     }
+
+    @Test
+    void containsEquivalent_sameDetailsWithDifferentStatus_returnsTrue() {
+        Task existing = new Todo("finish");
+        existing.markAsDone();
+        TaskList tasks = new TaskList();
+        tasks.add(existing);
+
+        assertTrue(tasks.containsEquivalent(new Todo("finish")));
+        assertFalse(tasks.containsEquivalent(new Todo("different")));
+    }
 }

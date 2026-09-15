@@ -92,7 +92,11 @@ public class Storage {
         }
 
         String taskType = line.substring(0, firstSeparatorIndex).trim();
-        boolean isDone = line.substring(firstSeparatorIndex + 1, secondSeparatorIndex).trim().equals("Y");
+        String status = line.substring(firstSeparatorIndex + 1, secondSeparatorIndex).trim();
+        if (!status.equals("Y") && !status.equals("N")) {
+            throw new ThomasException("Task status must be Y or N.");
+        }
+        boolean isDone = status.equals("Y");
         Task task = switch (taskType) {
             case "T" -> parseTodo(line, secondSeparatorIndex);
             case "D" -> parseDeadline(line, secondSeparatorIndex);
@@ -109,7 +113,7 @@ public class Storage {
 
     private Task parseTodo(String line, int descriptionSeparatorIndex) throws ThomasException {
         String description = line.substring(descriptionSeparatorIndex + 1).trim();
-        if (description.isEmpty()) {
+        if (description.isEmpty() || description.contains("|")) {
             throw new ThomasException("Todo description cannot be empty.");
         }
         return new Todo(description);
@@ -123,7 +127,7 @@ public class Storage {
 
         String description = line.substring(descriptionSeparatorIndex + 1, dateSeparatorIndex).trim();
         String dueDateTime = line.substring(dateSeparatorIndex + 1).trim();
-        if (description.isEmpty() || dueDateTime.isEmpty()) {
+        if (description.isEmpty() || dueDateTime.isEmpty() || dueDateTime.contains("|")) {
             throw new ThomasException("Deadline description or date/time cannot be empty.");
         }
         return new Deadline(description, dueDateTime);
@@ -143,7 +147,8 @@ public class Storage {
         String description = line.substring(descriptionSeparatorIndex + 1, startSeparatorIndex).trim();
         String startDateTime = line.substring(startSeparatorIndex + 1, endSeparatorIndex).trim();
         String endDateTime = line.substring(endSeparatorIndex + 1).trim();
-        if (description.isEmpty() || startDateTime.isEmpty() || endDateTime.isEmpty()) {
+        if (description.isEmpty() || startDateTime.isEmpty() || endDateTime.isEmpty()
+                || endDateTime.contains("|")) {
             throw new ThomasException("Event description and date/times cannot be empty.");
         }
         return new Event(description, startDateTime, endDateTime);

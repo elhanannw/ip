@@ -71,6 +71,18 @@ class StorageTest {
     }
 
     @Test
+    void load_invalidStatusAndExtraFields_skipsInvalidRecords() throws Exception {
+        Path file = temporaryDirectory.resolve("tasks.txt");
+        Files.writeString(file, "T | maybe | invalid\nT | N | extra | data\nT | N | valid\n");
+        Storage storage = new Storage(temporaryDirectory.toString(), "tasks.txt");
+
+        ArrayList<Task> loaded = storage.load();
+
+        assertEquals(1, loaded.size());
+        assertEquals("valid", loaded.get(0).getDescription());
+    }
+
+    @Test
     void save_taskListOverload_persistsTasks() {
         Storage storage = new Storage(temporaryDirectory.toString(), "tasks.txt");
         TaskList taskList = new TaskList();

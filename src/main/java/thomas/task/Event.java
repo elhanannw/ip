@@ -35,8 +35,11 @@ public class Event extends Task {
 
         assert fromDate != null : "A parsed event must have a start date";
         assert toDate != null : "A parsed event must have an end date";
-        if (toDate.isBefore(fromDate)) {
-            throw new ThomasException("Brooo how can event end date be before start date?");
+        boolean hasInvalidDateOrder = toDate.isBefore(fromDate);
+        boolean hasInvalidSameDayOrder = toDate.equals(fromDate)
+                && (fromTime == null || toTime == null || !toTime.isAfter(fromTime));
+        if (hasInvalidDateOrder || hasInvalidSameDayOrder) {
+            throw new ThomasException("Event end date/time must be after its start date/time.");
         }
     }
 

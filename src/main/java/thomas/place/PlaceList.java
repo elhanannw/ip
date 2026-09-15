@@ -1,6 +1,7 @@
 package thomas.place;
 
 import java.util.ArrayList;
+import java.util.Locale;
 import java.util.stream.Collectors;
 
 /** Stores saved places and provides place-list operations. */
@@ -21,6 +22,13 @@ public class PlaceList {
         places.add(place);
     }
 
+    /** Returns whether an identical place record is already stored. */
+    public boolean containsEquivalent(Place candidate) {
+        String candidateDetails = candidate.toFileFormat().toLowerCase(Locale.ENGLISH);
+        return places.stream().anyMatch(place ->
+                place.toFileFormat().toLowerCase(Locale.ENGLISH).equals(candidateDetails));
+    }
+
     public Place get(int index) {
         return places.get(index);
     }
@@ -39,8 +47,8 @@ public class PlaceList {
 
     /** Returns places whose names contain the keyword, ignoring case. */
     public ArrayList<Place> findByName(String keyword) {
-        String normalizedKeyword = keyword.toLowerCase();
-        return places.stream().filter(place -> place.getName().toLowerCase().contains(normalizedKeyword))
+        String normalizedKeyword = keyword.toLowerCase(Locale.ENGLISH);
+        return places.stream().filter(place -> place.getName().toLowerCase(Locale.ENGLISH).contains(normalizedKeyword))
                 .collect(Collectors.toCollection(ArrayList::new));
     }
 
