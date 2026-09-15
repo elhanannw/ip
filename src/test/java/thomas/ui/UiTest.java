@@ -11,6 +11,8 @@ import java.util.Scanner;
 
 import org.junit.jupiter.api.Test;
 
+import thomas.place.Place;
+import thomas.place.PlaceList;
 import thomas.task.TaskList;
 import thomas.task.Todo;
 
@@ -64,6 +66,35 @@ class UiTest {
         assertTrue(output.contains("bad command"));
         assertTrue(output.contains("Please enter a valid task number."));
         assertTrue(output.contains("Bye. See yaa!"));
+    }
+
+    @Test
+    void placeMessageMethods_coverEmptyMatchingAndLifecycleOutput() throws Exception {
+        Ui ui = new Ui();
+        PlaceList emptyPlaces = new PlaceList();
+        Place place = new Place("Sushi", "Restaurant", "Town", 4, "12", null, null);
+        PlaceList places = new PlaceList();
+        places.add(place);
+
+        String output = captureOutput(() -> {
+            ui.showPlaces(emptyPlaces);
+            ui.showPlaces(places);
+            ui.showMatchingPlaces(places, "sushi");
+            ui.showMatchingPlaces(places, "missing");
+            ui.showPlaceAdded(place, 1);
+            ui.showPlaceUpdated(place, 1);
+            ui.showPlaceDeletionRequest(place, 1);
+            ui.showPlaceDeleted(place, 1, 0);
+        });
+
+        assertTrue(output.contains("You have no saved places."));
+        assertTrue(output.contains("Here are your saved places:"));
+        assertTrue(output.contains("Here are the matching saved places:"));
+        assertTrue(output.contains("No saved places match \"missing\"."));
+        assertTrue(output.contains("Added this place:"));
+        assertTrue(output.contains("Updated this place:"));
+        assertTrue(output.contains("confirmdeleteplace 1"));
+        assertTrue(output.contains("You have 0 saved places."));
     }
 
     private String captureOutput(Runnable action) {
