@@ -33,6 +33,9 @@ public class AddPlaceCommand extends PlaceCommand {
         String note = fields.get("note");
         Place place = new Place(name, fields.get("type"), fields.get("at"),
                 Place.parseRating(fields.get("rating")), fields.get("price"), date, note);
+        if (places.containsEquivalent(place)) {
+            throw new ThomasException("This place already exists.");
+        }
         places.add(place);
         storage.save(places.getPlaces());
         ui.showPlaceAdded(place, places.size());

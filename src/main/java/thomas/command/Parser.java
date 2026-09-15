@@ -11,8 +11,13 @@ import thomas.ThomasException;
  * Parses command names and arguments entered by the user.
  */
 public class Parser {
+    private static final Pattern COMMAND_PATTERN = Pattern.compile("^(\\S+)(?:\\s+(.*))?$");
+    private static final Pattern DEADLINE_BY_FLAG = Pattern.compile("(?:^|\\s)/by(?=\\s|$)");
+    private static final Pattern EVENT_FROM_FLAG = Pattern.compile("(?:^|\\s)/from(?=\\s|$)");
+    private static final Pattern EVENT_TO_FLAG = Pattern.compile("(?:^|\\s)/to(?=\\s|$)");
     private static final Pattern PLACE_FLAG = Pattern.compile("\\s/(name|type|at|rating|price|visited|note)(?=\\s|$)");
     private static final Pattern ANY_FLAG = Pattern.compile("\\s/(\\S+)(?=\\s|$)");
+
     /**
      * Converts a complete user command into an executable command object.
      *
@@ -21,32 +26,37 @@ public class Parser {
      * @throws ThomasException If required command parts are missing or invalid.
      */
     public Command parse(String fullCommand) throws ThomasException {
-        String command = getCommand(fullCommand);
+        if (fullCommand == null || fullCommand.trim().isEmpty()) {
+            throw new ThomasException("Please enter a command. Type /help to see available commands.");
+        }
+        String normalizedCommand = fullCommand.trim();
+        String command = getCommand(normalizedCommand);
         switch (command) {
             case "list":
+                requireNoArgument(normalizedCommand, "list");
                 return new ListCommand();
             case "mark":
-                return new MarkCommand(getArgument(fullCommand, "mark"), this);
+                return new MarkCommand(getArgument(normalizedCommand, "mark"), this);
             case "unmark":
-                return new UnmarkCommand(getArgument(fullCommand, "unmark"), this);
+                return new UnmarkCommand(getArgument(normalizedCommand, "unmark"), this);
             case "delete":
-                return new DeleteCommand(getArgument(fullCommand, "delete"), this);
+                return new DeleteCommand(getArgument(normalizedCommand, "delete"), this);
             case "todo":
-                return new TodoCommand(getArgument(fullCommand, "todo"));
+                return new TodoCommand(validateTaskText(getArgument(normalizedCommand, "todo")));
             case "deadline":
-                String[] deadlineDetails = getDeadlineDetails(fullCommand);
+                String[] deadlineDetails = getDeadlineDetails(normalizedCommand);
                 return new DeadlineCommand(deadlineDetails[0], deadlineDetails[1]);
             case "event":
-                String[] eventDetails = getEventDetails(fullCommand);
+                String[] eventDetails = getEventDetails(normalizedCommand);
                 return new EventCommand(eventDetails[0], eventDetails[1], eventDetails[2]);
             case "on":
-                return new OnCommand(getArgument(fullCommand, "on"));
+                return new OnCommand(getArgument(normalizedCommand, "on"));
             case "find":
-                return new FindCommand(getArgument(fullCommand, "find"));
+                return new FindCommand(getArgument(normalizedCommand, "find"));
             case "place":
-                return parseAddPlace(fullCommand);
+                return parseAddPlace(normalizedCommand);
             case "listplace":
-                requireNoArgument(fullCommand, "listplace");
+                requireNoArgument(normalizedCommand, "listplace");
                 return new ListPlaceCommand();
             case "findplace":
                 return new FindPlaceCommand(getArgument(fullCommand, "findplace"));
@@ -59,9 +69,10 @@ public class Parser {
                 return new ConfirmDeletePlaceCommand(parsePlaceIndex(getArgument(fullCommand, "confirmdeleteplace"),
                         "Please specify a place number to confirm."));
             case "/help":
-                requireNoArgument(fullCommand, "/help");
+                requireNoArgument(normalizedCommand, "/help");
                 return new HelpCommand();
             case "bye":
+                requireNoArgument(normalizedCommand, "bye");
                 return new ExitCommand();
             default:
                 return new UnknownCommand();
@@ -75,8 +86,11 @@ public class Parser {
      * @return Command name.
      */
     public String getCommand(String command) {
-        int space = command.indexOf(' ');
-        return space == -1 ? command : command.substring(0, space);
+        if (command == null) {
+            return "";
+        }
+        Matcher matcher = COMMAND_PATTERN.matcher(command.trim());
+        return matcher.matches() ? matcher.group(1) : "";
     }
 
     /**
@@ -87,8 +101,9 @@ public class Parser {
      * @return Trimmed argument text.
      */
     public String getArgument(String command, String prefix) {
-        assert command.startsWith(prefix) : "Command must start with its expected prefix";
-        return command.substring(prefix.length()).trim();
+        String trimmed = command.trim();
+        assert getCommand(trimmed).equals(prefix) : "Command must start with its expected prefix";
+        return trimmed.substring(prefix.length()).trim();
     }
 
     /**
@@ -105,7 +120,15 @@ public class Parser {
         if (argument.isEmpty()) {
             throw new ThomasException(emptyMessage);
         }
-        int taskIndex = Integer.parseInt(argument) - 1;
+        if (!argument.matches("[1-9]\\d*")) {
+            throw new ThomasException("Please enter a valid task number.");
+        }
+        int taskIndex;
+        try {
+            taskIndex = Math.subtractExact(Integer.parseInt(argument), 1);
+        } catch (ArithmeticException | NumberFormatException e) {
+            throw new ThomasException("Please enter a valid task number.");
+        }
         if (taskIndex < 0 || taskIndex >= taskCount) {
             throw new ThomasException("Task number does not exist.");
         }
@@ -120,15 +143,21 @@ public class Parser {
      * @throws ThomasException If required parts are absent.
      */
     public String[] getDeadlineDetails(String command) throws ThomasException {
-        int byIndex = command.indexOf("/by");
-        if (byIndex == -1) {
+        Matcher byMatcher = DEADLINE_BY_FLAG.matcher(command);
+        if (!byMatcher.find()) {
             throw new ThomasException("Deadline requires '/by <date>'. E.g., deadline Assignment 1 /by Tuesday");
         }
-        String description = command.substring(8, byIndex).trim();
-        String by = command.substring(byIndex + 3).trim();
+        int byIndex = byMatcher.start();
+        int byValueIndex = byMatcher.end();
+        if (byMatcher.find()) {
+            throw new ThomasException("Deadline may contain '/by' only once.");
+        }
+        String description = getArgument(command.substring(0, byIndex), "deadline");
+        String by = command.substring(byValueIndex).trim();
         if (description.isEmpty()) {
             throw new ThomasException("Deadline description cannot be empty.");
         }
+        validateTaskText(description);
         if (by.isEmpty()) {
             throw new ThomasException("Date/Time of '/by' cannot be empty.");
         }
@@ -143,17 +172,25 @@ public class Parser {
      * @throws ThomasException If required parts are absent.
      */
     public String[] getEventDetails(String command) throws ThomasException {
-        int fromIndex = command.indexOf("/from");
-        int toIndex = command.indexOf("/to");
-        if (fromIndex == -1 || toIndex == -1 || toIndex < fromIndex) {
+        Matcher fromMatcher = EVENT_FROM_FLAG.matcher(command);
+        Matcher toMatcher = EVENT_TO_FLAG.matcher(command);
+        if (!fromMatcher.find() || !toMatcher.find() || toMatcher.start() < fromMatcher.start()) {
             throw new ThomasException("Event requires '/from' and '/to'. E.g., event meeting /from Mon /to Thurs");
         }
-        String description = command.substring(5, fromIndex).trim();
-        String from = command.substring(fromIndex + 5, toIndex).trim();
-        String to = command.substring(toIndex + 3).trim();
+        int fromIndex = fromMatcher.start();
+        int fromValueIndex = fromMatcher.end();
+        int toIndex = toMatcher.start();
+        int toValueIndex = toMatcher.end();
+        if (fromMatcher.find() || toMatcher.find()) {
+            throw new ThomasException("Event may contain '/from' and '/to' only once each.");
+        }
+        String description = getArgument(command.substring(0, fromIndex), "event");
+        String from = command.substring(fromValueIndex, toIndex).trim();
+        String to = command.substring(toValueIndex).trim();
         if (description.isEmpty()) {
             throw new ThomasException("Event description cannot be empty.");
         }
+        validateTaskText(description);
         if (from.isEmpty() || to.isEmpty()) {
             throw new ThomasException("Date/Time of '/from' or '/to' cannot be empty.");
         }
@@ -246,5 +283,12 @@ public class Parser {
     private boolean isPlaceField(String field) {
         return field.equals("name") || field.equals("type") || field.equals("at") || field.equals("rating")
                 || field.equals("price") || field.equals("visited") || field.equals("note");
+    }
+
+    private String validateTaskText(String text) throws ThomasException {
+        if (text.contains("|") || text.contains("\n") || text.contains("\r")) {
+            throw new ThomasException("Task descriptions cannot contain \"|\" or a line break.");
+        }
+        return text;
     }
 }

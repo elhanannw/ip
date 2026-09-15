@@ -16,6 +16,8 @@ class ParserTest {
     void getCommand_commandWithArguments_returnsCommandName() {
         assertEquals("deadline", parser.getCommand("deadline project /by 2026-08-26"));
         assertEquals("list", parser.getCommand("list"));
+        assertEquals("list", parser.getCommand("  list  "));
+        assertEquals("todo", parser.getCommand("todo\tread book"));
     }
 
     @Test
@@ -33,6 +35,8 @@ class ParserTest {
         assertThrows(ThomasException.class, () -> parser.getTaskIndex("", 2, "missing"));
         assertThrows(ThomasException.class, () -> parser.getTaskIndex("0", 2, "missing"));
         assertThrows(ThomasException.class, () -> parser.getTaskIndex("3", 2, "missing"));
+        assertThrows(ThomasException.class, () -> parser.getTaskIndex("one", 2, "missing"));
+        assertThrows(ThomasException.class, () -> parser.getTaskIndex("1 2", 2, "missing"));
     }
 
     @Test
@@ -69,6 +73,8 @@ class ParserTest {
         assertThrows(ThomasException.class, () -> parser.getDeadlineDetails("deadline submit report"));
         assertThrows(ThomasException.class, () -> parser.getDeadlineDetails("deadline /by 2026-08-26"));
         assertThrows(ThomasException.class, () -> parser.getDeadlineDetails("deadline submit /by"));
+        assertThrows(ThomasException.class, () ->
+                parser.getDeadlineDetails("deadline submit /by 2026-08-26 /by 2026-08-27"));
     }
 
     @Test
@@ -85,6 +91,8 @@ class ParserTest {
         assertThrows(ThomasException.class, () -> parser.getEventDetails(eventMissingTo));
         String eventWrongOrder = "event meeting /to 2026-08-26 /from 2026-08-27";
         assertThrows(ThomasException.class, () -> parser.getEventDetails(eventWrongOrder));
+        String repeatedFrom = "event meeting /from 2026-08-26 /from 2026-08-27 /to 2026-08-28";
+        assertThrows(ThomasException.class, () -> parser.getEventDetails(repeatedFrom));
     }
 
     @Test
@@ -93,5 +101,14 @@ class ParserTest {
                 "place Sushi /type restaurant /type cafe /at Town /rating 4 /price 12"));
         assertThrows(ThomasException.class, () -> parser.parse(
                 "place Sushi /type restaurant /at Town /rating 4 /price 12 /tag ramen"));
+    }
+
+    @Test
+    void parse_whitespaceAndUnexpectedArguments_handlesOrRejectsInput() throws ThomasException {
+        assertInstanceOf(TodoCommand.class, parser.parse("  todo\tread book  "));
+        assertThrows(ThomasException.class, () -> parser.parse("   "));
+        assertThrows(ThomasException.class, () -> parser.parse("list extra"));
+        assertThrows(ThomasException.class, () -> parser.parse("bye now"));
+        assertThrows(ThomasException.class, () -> parser.parse("todo unsafe | description"));
     }
 }

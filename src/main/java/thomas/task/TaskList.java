@@ -39,6 +39,23 @@ public class TaskList {
     }
 
     /**
+     * Returns whether a task with the same type and details is already stored.
+     * Completion status is intentionally ignored.
+     *
+     * @param candidate Task to compare.
+     * @return {@code true} if an equivalent task exists.
+     */
+    public boolean containsEquivalent(Task candidate) {
+        assert candidate != null : "Candidate task must not be null";
+        String candidateDetails = withoutStatus(candidate.toFileFormat());
+        return tasks.stream().anyMatch(task -> withoutStatus(task.toFileFormat()).equals(candidateDetails));
+    }
+
+    private String withoutStatus(String fileFormat) {
+        return fileFormat.replaceFirst("^([TDE] \\| )[YN]( \\| )", "$1$2");
+    }
+
+    /**
      * Returns the task at the given zero-based index.
      *
      * @param index position in the list

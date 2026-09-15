@@ -39,6 +39,9 @@ public class EventCommand extends Command {
     @Override
     public void execute(TaskList tasks, Ui ui, Storage storage) throws ThomasException {
         Task task = new Event(description, from, to);
+        if (tasks.containsEquivalent(task)) {
+            throw new ThomasException("This task already exists.");
+        }
         tasks.add(task);
         storage.save(tasks);
         ui.showTaskAdded(task, tasks.size());
