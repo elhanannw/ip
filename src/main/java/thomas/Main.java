@@ -5,6 +5,7 @@ import java.io.IOException;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 
@@ -23,7 +24,12 @@ public class Main extends Application {
             AnchorPane mainWindow = fxmlLoader.load();
             Scene scene = new Scene(mainWindow);
             stage.setScene(scene);
+            stage.getIcons().add(new Image(
+                    Main.class.getResourceAsStream("/images/DaBot.jpg")));
             stage.setTitle("Thomas");
+            stage.setMinWidth(420);
+            stage.setMinHeight(520);
+            stage.setResizable(true);
             fxmlLoader.<MainWindow>getController().setThomas(thomas);
             stage.show();
         } catch (IOException e) {
