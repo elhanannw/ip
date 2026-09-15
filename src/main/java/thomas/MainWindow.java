@@ -31,9 +31,11 @@ public class MainWindow extends AnchorPane {
     private Image thomasImage = new Image(
             this.getClass().getResourceAsStream("/images/DaBot.jpg"));
 
+    /** Initializes responsive sizing and automatic conversation scrolling. */
     @FXML
     public void initialize() {
         scrollPane.vvalueProperty().bind(dialogContainer.heightProperty());
+        dialogContainer.prefWidthProperty().bind(scrollPane.widthProperty().subtract(2));
     }
 
     /**
@@ -92,14 +94,24 @@ public class MainWindow extends AnchorPane {
         }
 
         String response = thomas.getResponse(input);
+        DialogBox responseDialog = isErrorResponse(response)
+                ? DialogBox.getErrorDialog(response, thomasImage)
+                : DialogBox.getThomasDialog(response, thomasImage);
         dialogContainer.getChildren().addAll(
                 DialogBox.getUserDialog(input, userImage),
-                DialogBox.getThomasDialog(response, thomasImage)
+                responseDialog
         );
         userInput.clear();
+        userInput.requestFocus();
 
         if (thomas.isLastCommandExit()) {
             Platform.exit();
         }
+    }
+
+    private boolean isErrorResponse(String response) {
+        return response.startsWith("Error:")
+                || response.startsWith("Please enter")
+                || response.startsWith("An unexpected error");
     }
 }
