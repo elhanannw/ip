@@ -12,6 +12,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
 import thomas.ThomasException;
+import thomas.place.PlaceList;
+import thomas.storage.PlaceStorage;
 import thomas.storage.Storage;
 import thomas.task.Deadline;
 import thomas.task.Event;
@@ -111,7 +113,73 @@ class CommandExecutionTest {
                 new FindCommand("").execute(new TaskList(), new Ui(), storage()));
     }
 
+    @Test
+    void duplicateTaskCommands_execute_throwWithoutAdding() throws Exception {
+        TaskList tasks = new TaskList();
+        Storage storage = storage();
+        new TodoCommand("same").execute(tasks, new Ui(), storage);
+
+        assertThrows(ThomasException.class, () ->
+                new TodoCommand("same").execute(tasks, new Ui(), storage));
+        assertEquals(1, tasks.size());
+    }
+
+    @Test
+    void onListAndHelpCommands_executeWithoutMutatingTasks() throws Exception {
+        TaskList tasks = new TaskList();
+        tasks.add(new Deadline("submit", "2026-08-26"));
+
+        new OnCommand("2026-08-26").execute(tasks, new Ui(), storage());
+        new ListCommand().execute(tasks, new Ui(), storage());
+        new HelpCommand().execute(tasks, new Ui(), storage());
+
+        assertEquals(1, tasks.size());
+        assertThrows(ThomasException.class, () ->
+                new OnCommand("").execute(tasks, new Ui(), storage()));
+    }
+
+    @Test
+    void placeCommands_executeCompleteLifecycle() throws Exception {
+        PlaceList places = new PlaceList();
+        PlaceStorage storage = placeStorage();
+        Parser parser = new Parser();
+
+        executePlace("place Sushi /type Restaurant /at Town /rating 4 /price 12",
+                parser, places, storage);
+        executePlace("editplace 1 /rating 5", parser, places, storage);
+        executePlace("listplace", parser, places, storage);
+        executePlace("findplace sushi", parser, places, storage);
+        executePlace("deleteplace 1", parser, places, storage);
+        executePlace("confirmdeleteplace 1", parser, places, storage);
+
+        assertEquals(0, places.size());
+        assertEquals(0, storage.load().size());
+    }
+
+    @Test
+    void placeCommands_invalidState_throwExceptions() throws Exception {
+        PlaceList places = new PlaceList();
+        PlaceStorage storage = placeStorage();
+
+        assertThrows(ThomasException.class, () ->
+                new FindPlaceCommand("").execute(places, new Ui(), storage));
+        assertThrows(ThomasException.class, () ->
+                new DeletePlaceCommand(1).execute(places, new Ui(), storage));
+        assertThrows(ThomasException.class, () ->
+                new ConfirmDeletePlaceCommand(1).execute(places, new Ui(), storage));
+    }
+
     private Storage storage() {
         return new Storage(temporaryDirectory.toString(), "tasks.txt");
+    }
+
+    private PlaceStorage placeStorage() {
+        return new PlaceStorage(temporaryDirectory.resolve("places.txt").toString());
+    }
+
+    private void executePlace(String input, Parser parser, PlaceList places, PlaceStorage storage)
+            throws Exception {
+        PlaceCommand command = (PlaceCommand) parser.parse(input);
+        command.execute(places, new Ui(), storage);
     }
 }

@@ -8,6 +8,10 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import org.junit.jupiter.api.Test;
 
 import thomas.ThomasException;
+import thomas.storage.Storage;
+import thomas.task.TaskList;
+import thomas.task.Todo;
+import thomas.ui.Ui;
 
 class ParserTest {
     private final Parser parser = new Parser();
@@ -110,5 +114,29 @@ class ParserTest {
         assertThrows(ThomasException.class, () -> parser.parse("list extra"));
         assertThrows(ThomasException.class, () -> parser.parse("bye now"));
         assertThrows(ThomasException.class, () -> parser.parse("todo unsafe | description"));
+    }
+
+    @Test
+    void parse_taskIndexesWithInvalidSyntax_returnsCommandsThatRejectOnExecution() throws Exception {
+        TaskList tasks = new TaskList();
+        tasks.add(new Todo("task"));
+        Storage storage = new Storage("build", "parser-test.txt");
+
+        assertThrows(ThomasException.class, () -> parser.parse("mark abc").execute(tasks, new Ui(), storage));
+        assertThrows(ThomasException.class, () -> parser.parse("delete 1 2").execute(tasks, new Ui(), storage));
+        assertThrows(ThomasException.class, () -> parser.parse("unmark 999999999999999999999").execute(
+                tasks, new Ui(), storage));
+    }
+
+    @Test
+    void parse_placeCommandsWithMissingOrMalformedDetails_throwsException() {
+        assertThrows(ThomasException.class, () -> parser.parse("editplace"));
+        assertThrows(ThomasException.class, () -> parser.parse("editplace 1"));
+        assertThrows(ThomasException.class, () -> parser.parse("editplace abc /rating 5"));
+        assertThrows(ThomasException.class, () -> parser.parse("editplace 1 /rating 5 /price 10"));
+        assertThrows(ThomasException.class, () -> parser.parse("deleteplace"));
+        assertThrows(ThomasException.class, () -> parser.parse("deleteplace -1"));
+        assertThrows(ThomasException.class, () -> parser.parse("confirmdeleteplace zero"));
+        assertThrows(ThomasException.class, () -> parser.parse("place Sushi /type"));
     }
 }

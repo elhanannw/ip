@@ -1,6 +1,7 @@
 package thomas;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.ByteArrayInputStream;
@@ -72,5 +73,48 @@ class ThomasTest {
         assertTrue(response.contains("Places:"));
         assertTrue(response.contains("place NAME /type TYPE /at ADDRESS /rating 1-5 /price AMOUNT"));
         assertTrue(response.contains("[/visited YYYY-MM-DD] [/note NOTE]"));
+    }
+
+    @Test
+    void getResponse_taskLifecycle_updatesAndPersistsTasks() {
+        Path taskFile = temporaryDirectory.resolve("tasks.txt");
+        Thomas thomas = new Thomas(temporaryDirectory.toString(), "tasks.txt");
+
+        thomas.getResponse("todo read book");
+        thomas.getResponse("mark 1");
+
+        Thomas reloaded = new Thomas(temporaryDirectory.toString(), "tasks.txt");
+        assertEquals(1, reloaded.getTasks().size());
+        assertTrue(reloaded.getTasks().get(0).isDone());
+        assertTrue(taskFile.toFile().exists());
+
+        reloaded.getResponse("unmark 1");
+        reloaded.getResponse("delete 1");
+        assertEquals(0, reloaded.getTasks().size());
+    }
+
+    @Test
+    void getResponse_errors_returnFriendlyMessagesAndDoNotExit() {
+        Thomas thomas = new Thomas(temporaryDirectory.toString(), "tasks.txt");
+
+        String empty = thomas.getResponse("   ");
+        String malformedNumber = thomas.getResponse("mark not-a-number");
+        String invalidDate = thomas.getResponse("deadline submit /by 2026-02-30");
+
+        assertTrue(empty.contains("Please enter a command"));
+        assertTrue(malformedNumber.contains("valid task number"));
+        assertTrue(invalidDate.contains("wrong date format"));
+        assertFalse(thomas.isLastCommandExit());
+    }
+
+    @Test
+    void getResponse_bye_setsExitFlagUntilNextCommand() {
+        Thomas thomas = new Thomas(temporaryDirectory.toString(), "tasks.txt");
+
+        thomas.getResponse("bye");
+        assertTrue(thomas.isLastCommandExit());
+
+        thomas.getResponse("list");
+        assertFalse(thomas.isLastCommandExit());
     }
 }
