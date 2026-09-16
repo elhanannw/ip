@@ -41,3 +41,9 @@ This project is configured with the Shadow plugin to produce a runnable fat JAR 
    ```
 
 You can also run `./gradlew build` (or `.\gradlew build` on Windows); it is configured to produce the same fat JAR as part of the build.
+
+## Acknowledgements
+
+Thomas started from the [SE-EDU Duke project template and tutorials](https://se-education.org/guides/tutorials/duke.html).
+The initial Gradle structure, JavaFX/FXML chat interface, and related starter resources were adapted from that
+material. The original template contributors are listed in [CONTRIBUTORS.md](CONTRIBUTORS.md).
