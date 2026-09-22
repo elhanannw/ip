@@ -21,9 +21,6 @@ javafx {
     modules = ['javafx.controls', 'javafx.fxml']
 }
 
-// Platform-specific native dependencies for cross-platform support
-def javafxPlatforms = ['win', 'mac', 'monocle']
-
 repositories {
     mavenCentral()
 }
@@ -31,20 +28,14 @@ repositories {
 dependencies {
     String jUnitVersion = '5.14.4'
     String javaFxVersion = '25'
+    List<String> javaFxModules = ['base', 'graphics', 'controls', 'fxml']
+    List<String> javaFxPlatforms = ['win', 'linux', 'mac-aarch64']
 
-    implementation "org.openjfx:javafx-controls:${javaFxVersion}"
-    implementation "org.openjfx:javafx-fxml:${javaFxVersion}"
-    
-    // Include native libraries for all platforms
-    implementation "org.openjfx:javafx-controls:${javaFxVersion}:win"
-    implementation "org.openjfx:javafx-controls:${javaFxVersion}:mac"
-    implementation "org.openjfx:javafx-controls:${javaFxVersion}:mac-aarch64"
-    implementation "org.openjfx:javafx-controls:${javaFxVersion}:linux"
-    
-    implementation "org.openjfx:javafx-fxml:${javaFxVersion}:win"
-    implementation "org.openjfx:javafx-fxml:${javaFxVersion}:mac"
-    implementation "org.openjfx:javafx-fxml:${javaFxVersion}:mac-aarch64"
-    implementation "org.openjfx:javafx-fxml:${javaFxVersion}:linux"
+    javaFxModules.each { module ->
+        javaFxPlatforms.each { platform ->
+            implementation "org.openjfx:javafx-${module}:${javaFxVersion}:${platform}"
+        }
+    }
 
     testImplementation "org.junit.jupiter:junit-jupiter-api:${jUnitVersion}"
 
